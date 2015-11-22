@@ -1,5 +1,5 @@
-To use processInput.h to turn an input file into an adjacency matrix or
-list, do the following:
+// To use processInput.h to turn an input file into an adjacency matrix or
+// list, do the following:
 
 // Put this near the top of your program:
 #include "processInput.h"
@@ -10,4 +10,7 @@ adjMatrix adjM = getAdjMatrix();    // gets matrix corresponding to input
 adjList adjL = getAdjList();        // gets list corresponding to input
 
 
-For an example of this, check out "inputTest.cpp"
+// For an example of this, check out "inputTest.cpp". You can run it with
+// the following commands:
+make inputTest
+./inputTest d10.in                  // d10.in being my simple sample input
