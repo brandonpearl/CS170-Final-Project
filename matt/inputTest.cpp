@@ -1,8 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <set>
+#include <assert.h>
 #include "processInput.h"
+
 using namespace std;
+
 
 int main(int argc, char *argv[]) {
     processInput(argc, argv);
@@ -24,15 +27,22 @@ int main(int argc, char *argv[]) {
 
     // Prints out the adjaceny list (to check)
     printf("The adjancency list is:\n");
-    vector<int> v;
+    set<int> s;
     for (int i=0; i < size; i++) {
         printf("%d ", i);
-        v = adjL.list[i];
-        for (vector<int>::iterator iter = v.begin(); iter != v.end(); iter++) {
+        s = adjL.list[i];
+        for (set<int>::iterator iter = s.begin(); iter != s.end(); iter++) {
             printf("->%d", *iter);
         }
         printf("\n");
     }
+
+    // makes sure adjancencies in list and matrix follow
+    assert(adjL.edgeExists(0,6));
+    assert(!adjL.edgeExists(9,1));
+    assert(adjL.edgeExists(4,7));
+    assert(!adjL.edgeExists(5,5));
+    assert(adjL.edgeExists(8,2));
 
     return 0;
 }

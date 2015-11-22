@@ -10,4 +10,4 @@ adjMatrix adjM = getAdjMatrix();    // gets matrix corresponding to input
 adjList adjL = getAdjList();        // gets list corresponding to input
 
 
-For an example of this, check out "test.cpp"
+For an example of this, check out "inputTest.cpp"

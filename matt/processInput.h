@@ -15,13 +15,19 @@ struct adjMatrix {
 
 /* Adjanceny List structure
  * - Size: returns the number of nodes in the graph
- * - List: list[i] will return a vector containing all nodes i has an 
+ * - List: list[i] will return a set containing all nodes i has an 
  *         edge to. The nodes will be represented by their int values.
- *         To check if edge (i,j) exists, 
+ *         To check if edge (i,j) exists, use:
+ *              <adjListName>.edgeExists(i,j)
+ *         Which will evaluate to TRUE if edge (i,j) exists
  */
 struct adjList {
     int size;
-    vector<int>* list;
+    set<int>* list;
+
+    bool edgeExists(int i, int j) {
+        return list[i].find(j) != list[i].end();
+    }
 } ;
 
 adjMatrix adjM;
@@ -54,7 +60,7 @@ int processInput(int argc, char *argv[]) {
 
         // Initialize our Adjacency List
         adjL.size = size;
-        adjL.list = new vector<int>[size];
+        adjL.list = new set<int>[size];
 
         // We then construct our adjacency matrix and list
         char ch;
@@ -69,7 +75,7 @@ int processInput(int argc, char *argv[]) {
 
                 // Insert into adjacency list if edge exists
                 if (e == 1) {
-                    adjL.list[i].push_back(j);
+                    adjL.list[i].insert(j);
                 }
                 
                 inFile.get(ch);
