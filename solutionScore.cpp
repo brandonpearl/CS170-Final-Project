@@ -12,23 +12,24 @@
 #include "matt/processinput.h"
 #endif
 using namespace std;
+inline int min(int a, int b) {if (a>b) {return a;} else {return b;}}
 
 int scoreSolution(int rank[], adjList adj) {
-	assert(sizeof(rank)/sizeof(int) == adj.size);
-	vector<bool> hasSeen (adj.size, false);
+	int size = sizeof(rank)/sizeof(int);
+	assert(size == adj.size);
+	vector<bool> hasSeen (size, false);
 	int score = 0;
-	for (int i=0; i<sizeof(rank)/sizeof(int); i++) {
-		int node = rank[i] - 1;
+	for (int i=0; i<size; i++) {
+		int node = min(rank[i] - 1, size-1);
 		hasSeen[node] = true;
 		set<int> adjacent = adj.list[i];
-		for (int j=0; j<sizeof(adjacent)/sizeof(int); j++) {
+		for (int j=0; j<size; j++) {
 			if (!hasSeen[j]) {
-				hasSeen[j] = true;
 				score++;
 			}
 		}
 	}
-	for (int i=0; i<sizeof(hasSeen)/sizeof(bool); i++) {
+	for (int i=0; i<size; i++) {
 		if (!hasSeen[i]) {
 			cout << "Ranking does not include all nodes." << endl;
 			exit(0);
