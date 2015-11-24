@@ -30,10 +30,7 @@ int scoreSolution(vector<int> rank, AdjList adj) {
 		}
 	}
 	for (int i=0; i<size; i++) {
-		if (!hasSeen[i]) {
-			cout << "Ranking does not include all nodes." << endl;
-			exit(0);
-		}
+		assert(hasSeen[i]);
 	}
 	return score;
 }
