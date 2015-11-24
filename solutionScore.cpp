@@ -23,8 +23,8 @@ int scoreSolution(int rank[], AdjList adj) {
 		int node = min(rank[i] - 1, size-1);
 		hasSeen[node] = true;
 		set<int> adjacent = adj.allEdges(i);
-		for (int j=0; j<size; j++) {
-			if (!hasSeen[j]) {
+		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
+			if (!hasSeen[*j]) {
 				score++;
 			}
 		}
