@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <time.h>
 
+int string_to_int(char *s);
+void generate_instance(int node_count, int p_edge, char *file_name);
+
 int string_to_int(char *s) {
     int ret_val = 0;
     while (*s != '\0') {
@@ -11,7 +14,7 @@ int string_to_int(char *s) {
     return ret_val;
 }
 
-void generate_instance(int node_count, float p_edge, char *file_name) {
+void generate_instance(int node_count, int p_edge, char *file_name) {
     FILE *test_exist = fopen(file_name, "r");
     if (test_exist != NULL) {
         printf("Error: File already exists\n");
@@ -65,7 +68,6 @@ int main(int argc, char* argv[]){
         printf("Edge probability must be an integer from 0 to 100\n");
         exit(1);
     }
-    // printf("Args are: %d %d %s\n", node_count, p_edge, file_name);
     printf("Generating instance with %d nodes, ", node_count);
     printf("with edge probability %d%%, ", p_edge);
     printf("to file: %s\n", file_name);
