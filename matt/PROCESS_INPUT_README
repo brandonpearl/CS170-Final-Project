@@ -4,13 +4,8 @@
 // Put this near the top of your program:
 #include "processInput.h"
 
-// Include this in your main(int argc, char *argv[]) function:
-processInput(argc, argv);           // processes input
-adjMatrix adjM = getAdjMatrix();    // gets matrix corresponding to input
-adjList adjL = getAdjList();        // gets list corresponding to input
+// Use this to construct an adjancey for a given string "filename"
+AdjMatrix adjM (filename);    // gets matrix corresponding to input
+AdjList adjL (filename);        // gets list corresponding to input
 
 
-// For an example of this, check out "inputTest.cpp". You can run it with
-// the following commands:
-make inputTest
-./inputTest d10.in                  // d10.in being my simple sample input
