@@ -14,13 +14,13 @@ int string_to_int(char *s) {
 void generate_instance(int node_count, float p_edge, char *file_name) {
     FILE *test_exist = fopen(file_name, "r");
     if (test_exist != NULL) {
-        printf("File already exists\n");
+        printf("Error: File already exists\n");
         fclose(test_exist);
         exit(1);
     }
     FILE *f = fopen(file_name, "w");
     if (f == NULL) {
-        printf("File creation error\n");
+        printf("Error: File creation error\n");
         exit(1);
     }
     fprintf(f, "%d\n", node_count);
@@ -66,5 +66,8 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     // printf("Args are: %d %d %s\n", node_count, p_edge, file_name);
+    printf("Generating instance with %d nodes, ", node_count);
+    printf("with edge probability %d%%, ", p_edge);
+    printf("to file: %s\n", file_name);
     generate_instance(node_count, p_edge, file_name);
 }

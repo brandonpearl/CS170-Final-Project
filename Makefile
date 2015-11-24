@@ -1,4 +1,4 @@
 all:
-	gcc instance_generator.c -o instance_generator
+	g++ instance_generator.cpp -o instance_generator
 clean:
 	rm instance_generator
