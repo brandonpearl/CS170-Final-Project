@@ -12,10 +12,10 @@
 #include "matt/processinput.h"
 #endif
 using namespace std;
-inline int min(int a, int b) {if (a>b) {return a;} else {return b;}}
+inline int min(int a, int b) {if (a>b) {return b;} else {return a;}}
 
-int scoreSolution(int rank[], AdjList adj) {
-	int size = sizeof(rank)/sizeof(int);
+int scoreSolution(vector<int> rank, AdjList adj) {
+	int size = rank.size();
 	assert(size == adj.getSize());
 	vector<bool> hasSeen (size, false);
 	int score = 0;
@@ -38,6 +38,17 @@ int scoreSolution(int rank[], AdjList adj) {
 	return score;
 }
 
-int main() {
-	return 0;
+int main(int argc, char *argv[]) {
+	int size;
+	if (argc > 1) {
+		size = atof(argv[1]);
+	} else {
+		size = 10;
+	}
+	AdjList lst = AdjList(size);
+	vector<int> a;
+	for (int i=1; i<=size; i++) {
+		a.push_back(i);
+	}
+	cout << scoreSolution(a, lst) << endl;
 }
