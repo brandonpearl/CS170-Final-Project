@@ -1,2 +1,6 @@
 *.exe
 *.obj
+
+// Compiled files
+instance_generator
+solver_josh
