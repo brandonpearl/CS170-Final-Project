@@ -35,7 +35,11 @@ int scoreSolution(vector<int> rank, AdjList adj) {
 	return score;
 }
 
-int main(int argc, char *argv[]) {
+/* 
+Changed name to test_main so this file can be included in another file that has a 
+main function
+*/
+int test_main(int argc, char *argv[]) {
 	int size;
 	if (argc > 1) {
 		size = atof(argv[1]);
@@ -48,4 +52,5 @@ int main(int argc, char *argv[]) {
 		a.push_back(i);
 	}
 	cout << scoreSolution(a, lst) << endl;
+	return 0;
 }

@@ -25,8 +25,8 @@ class AdjMatrix {
     
         // Start parsing the file, assuming its properly formatted
         // We begin by getting the number of nodes (between 0 and 100)
-        char line[3];
-        inFile.getline(line, 3);
+        char line[4];
+        inFile.getline(line, 4);
     
         size = atoi(line);
         matrix = new int*[size];
@@ -45,6 +45,7 @@ class AdjMatrix {
                 inFile.get(ch);
             }
         }
+
     }   
 
     int getSize(){
@@ -98,8 +99,8 @@ class AdjList {
     
         // Start parsing the file, assuming its properly formatted
         // We begin by getting the number of nodes (between 0 and 100)
-        char line[3];
-        inFile.getline(line, 3);
+        char line[4];
+        inFile.getline(line, 4);
     
         size = atoi(line);
         list = new set<int>[size];
