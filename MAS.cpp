@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
       int maxScore = INT_MIN;
 
       //All ranks stored here
-      vector<vector<int>> ranks;
+      vector<vector<int> > ranks;
 
       //All other rankings will be added accordingly
       ranks.push_back(solve_instance(objectMatrix, objectList));
