@@ -17,6 +17,9 @@ void print_array(int *arr, int size) {
     }
 }
 
+/*
+This function adapted from basic online shuffle code
+*/
 void shuffle(int *array, int size)
 {
     if (size > 1) 
@@ -45,7 +48,6 @@ void swap_if_better(int *arr, int subset_count, int size, AdjList list) {
     int buff[subset_count];
     int curr_start;
     for (curr_start = 0; curr_start + 2*subset_count <= size; curr_start += 2*subset_count) {
-        printf("testing swap\n");
         memcpy(arr_cpy, arr, sizeof(int)*size);
         memcpy(buff, arr_cpy+curr_start, sizeof(int)*subset_count);
         memcpy(arr_cpy+curr_start, arr_cpy+curr_start+subset_count, sizeof(int)*subset_count);
@@ -96,9 +98,10 @@ void initialize_vertex_array(int *inp, int size) {
     }
 }
 
-std::vector<int> solve_instance(char *file_name) {
-    AdjMatrix matrix = AdjMatrix(file_name);
-    AdjList list = AdjList(file_name);
+/*
+This is the public method to call for this file
+*/
+std::vector<int> solve_instance(AdjMatrix matrix, AdjList list) {
 
     int vertex_count = matrix.getSize();
 
@@ -119,13 +122,13 @@ std::vector<int> solve_instance(char *file_name) {
 }
 
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Need to supply instance filename\n");
-        exit(1);
-    }
+// int main(int argc, char *argv[]) {
+//     if (argc != 2) {
+//         printf("Need to supply instance filename\n");
+//         exit(1);
+//     }
 
-    solve_instance(argv[1]);
+//     solve_instance(argv[1]);
 
-    return 0;
-}
+//     return 0;
+// }
