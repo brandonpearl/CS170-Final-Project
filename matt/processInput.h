@@ -8,6 +8,7 @@ using namespace std;
  *      AdjMatrix foo (filename);
  * - getSize(): returns the number of nodes in the graph
  * - edgeExists(i,j): returns TRUE if edge (i,j) exists, FALSE otherwise
+ * - is_edge(i,j) does the same as above, but uses i as x-coord, and j as y-coord
  */
 class AdjMatrix {
     int size;
@@ -24,8 +25,8 @@ class AdjMatrix {
     
         // Start parsing the file, assuming its properly formatted
         // We begin by getting the number of nodes (between 0 and 100)
-        char line[3];
-        inFile.getline(line, 3);
+        char line[4];
+        inFile.getline(line, 4);
     
         size = atoi(line);
         matrix = new int*[size];
@@ -44,6 +45,7 @@ class AdjMatrix {
                 inFile.get(ch);
             }
         }
+
     }   
 
     int getSize(){
@@ -52,6 +54,12 @@ class AdjMatrix {
 
     bool edgeExists(int i, int j){
         return matrix[i][j] == 1;
+    }
+
+    // Same from above, but here we treat i as the x-coord
+    // and j as the y-coord, instead of the other way around.
+    bool is_edge(int i, int j) {
+        return matrix[j][i] == 1;
     }
 } ;
 
@@ -63,6 +71,7 @@ class AdjMatrix {
  *      AdjList foo (filename);
  * - getSize(): returns the number of nodes in the graph
  * - edgeExists(i, j): returns TRUE if edge (i,j) exists, FALSE otherwise
+ * - is_edge(i,j) does the same as above, but uses i as x-coord, and j as y-coord
  * - allEdges(i): returns a set<int> of all edges coming from node i
  */
 class AdjList {
@@ -70,6 +79,16 @@ class AdjList {
     set<int>* list;
 
   public:
+    AdjList (int s){
+        size = s;
+        list = new set<int>[size];
+        for (int i=0; i<size; i++) {
+            for (int j=0; j<size; j++) {
+                int num = rand() % 2;
+                list[i].insert(j);
+            }
+        }
+    }
     AdjList (char* filename){
         // Attempt to open the file
         ifstream inFile;
@@ -80,8 +99,8 @@ class AdjList {
     
         // Start parsing the file, assuming its properly formatted
         // We begin by getting the number of nodes (between 0 and 100)
-        char line[3];
-        inFile.getline(line, 3);
+        char line[4];
+        inFile.getline(line, 4);
     
         size = atoi(line);
         list = new set<int>[size];
@@ -109,6 +128,12 @@ class AdjList {
 
     bool edgeExists(int i, int j) {
         return list[i].find(j) != list[i].end();
+    }
+
+    // Same from above, but here we treat i as the x-coord
+    // and j as the y-coord, instead of the other way around.
+    bool is_edge(int i, int j) {
+        return list[j].find(i) != list[j].end();
     }
 
     set<int> allEdges(int i) {
