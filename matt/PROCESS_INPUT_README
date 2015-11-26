@@ -8,4 +8,5 @@
 AdjMatrix adjM (filename);    // gets matrix corresponding to input
 AdjList adjL (filename);        // gets list corresponding to input
 
-
+// To get an idea for what you can do with these Adjacencies, look at the
+// header comments in processInput.h
