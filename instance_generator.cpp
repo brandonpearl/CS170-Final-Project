@@ -35,7 +35,7 @@ void generate_instance(int node_count, int p_edge, char *file_name) {
         char delimeter = ' ';
         for (column = 0; column < node_count; column++) {
             int rand_val = rand() % 101;
-            int edge_val = row != column && rand_val <= p_edge;
+            int edge_val = p_edge > 0 && row != column && rand_val <= p_edge;
             if (column == node_count - 1 && row < node_count - 1) {
                 delimeter = '\n';
             }
