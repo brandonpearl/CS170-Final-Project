@@ -22,7 +22,7 @@ int scoreSolution(vector<int> rank, AdjList adj) {
 	for (int i=0; i<size; i++) {
 		int node = min(rank[i] - 1, size-1);
 		hasSeen[node] = true;
-		set<int> adjacent = adj.allEdges(i);
+		set<int> adjacent = adj.allEdges(node);
 		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
 			if (!hasSeen[*j]) {
 				score++;
@@ -34,6 +34,27 @@ int scoreSolution(vector<int> rank, AdjList adj) {
 	}
 	return score;
 }
+
+/*
+Used for Josh's greedy algorithm, where I build the output ordering one vertex
+at a time, based on which of the remaining nodes gives the best intermediate score.
+*/
+int scorePartialSolution(vector<int> rank, AdjList adj, int curr_sol_size) {
+	vector<bool> hasSeen(adj.getSize(), false);
+	int score = 0;
+	for (int i=0; i<curr_sol_size; i++) {
+		int node = rank[i] - 1;
+		hasSeen[node] = true;
+		set<int> adjacent = adj.allEdges(node);
+		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
+			if (!hasSeen[*j]) {
+				score++;
+			}
+		}
+	}
+	return score;
+}
+
 
 /* 
 Changed name to test_main so this file can be included in another file that has a 
