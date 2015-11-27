@@ -8,7 +8,6 @@ using namespace std;
  *      AdjMatrix foo (filename);
  * - getSize(): returns the number of nodes in the graph
  * - edgeExists(i,j): returns TRUE if edge (i,j) exists, FALSE otherwise
- * - is_edge(i,j) does the same as above, but uses i as x-coord, and j as y-coord
  */
 class AdjMatrix {
     int size;
@@ -56,11 +55,6 @@ class AdjMatrix {
         return matrix[i][j] == 1;
     }
 
-    // Same from above, but here we treat i as the x-coord
-    // and j as the y-coord, instead of the other way around.
-    bool is_edge(int i, int j) {
-        return matrix[j][i] == 1;
-    }
 } ;
 
 
@@ -71,7 +65,6 @@ class AdjMatrix {
  *      AdjList foo (filename);
  * - getSize(): returns the number of nodes in the graph
  * - edgeExists(i, j): returns TRUE if edge (i,j) exists, FALSE otherwise
- * - is_edge(i,j) does the same as above, but uses i as x-coord, and j as y-coord
  * - allEdges(i): returns a set<int> of all edges coming from node i
  */
 class AdjList {
@@ -128,12 +121,6 @@ class AdjList {
 
     bool edgeExists(int i, int j) {
         return list[i].find(j) != list[i].end();
-    }
-
-    // Same from above, but here we treat i as the x-coord
-    // and j as the y-coord, instead of the other way around.
-    bool is_edge(int i, int j) {
-        return list[j].find(i) != list[j].end();
     }
 
     set<int> allEdges(int i) {

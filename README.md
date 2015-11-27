@@ -18,7 +18,7 @@ Instructions for Instance Generator:
 
 Algorithms Implemented - Josh
 
-Note that calling my solve_isntance will run all of these algorithms by itself.
+Note that calling my solve_instance will run all of these algorithms by itself.
 
 1. Randomly shuffle x number of times and chosse the best version
 2. Swap adjacent blocks of size 1,2,4,...,log(n) if the swap leads to improvement
