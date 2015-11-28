@@ -34,3 +34,11 @@ Note that calling my solve_instance will run all of these algorithms by itself.
       and so we return the one that has the best score
 4. Sort by indegree ascdending, and outdegree descending, and retain if they lead to
     improvement.
+
+
+Algorithms Implemented - Brandon
+
+Like Josh's, my solve_instance will pick the best result of all algorithms within the .cpp file.
+
+1. Monte Carlo-style swapping: swap individual indices x times, but only perform the swap if the score improves.
+2. Frugal dynamic programming routine which performs a DP step on subproblems of size subSize or below.
