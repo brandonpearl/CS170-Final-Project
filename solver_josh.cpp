@@ -24,7 +24,7 @@ void print_array(int *arr, int size) {
 }
 
 /*
-Utility method specifically to print out the 2-d degree array being used by the 
+Utility method specifically to print out the 2-d degree array being used by the
 alg_order_by_degree.
 */
 void print_degrees(int arr[][2], int size) {
@@ -40,10 +40,10 @@ of elements in the array.
 */
 void shuffle(int *array, int size)
 {
-    if (size > 1) 
+    if (size > 1)
     {
         int i;
-        for (i = 0; i < size - 1; i++) 
+        for (i = 0; i < size - 1; i++)
         {
           int j = i + rand() / (RAND_MAX / (size - i) + 1);
           int t = array[j];
@@ -63,7 +63,7 @@ int score_ordering(int *ordering, AdjList list) {
 }
 
 /*
-Convert the C integer array into a C++ vector, and evaluate the score for the 
+Convert the C integer array into a C++ vector, and evaluate the score for the
 first col_sol_size elements using the scorePartialSolution method.
 */
 int score_partial_ordering(int *ordering, AdjList list, int cur_sol_size) {
@@ -286,7 +286,7 @@ void initialize_vertex_array(int *inp, int size) {
 }
 
 /*
-Fill out the node degrees array, so that for a given node, its indegree is 
+Fill out the node degrees array, so that for a given node, its indegree is
 arr[node-1][0], and its outdegree is arr[node-1][1] (assuming nodes start
 numbering from 1)
 */
@@ -332,7 +332,7 @@ This is the public method to call for this file. This method will run all of the
 algorithms I have written, one at a time, to iteratively improve upon a solution.
 It will return the final result of running all of the algorithms in a C++ vector.
 */
-std::vector<int> solve_instance(AdjMatrix matrix, AdjList list) {
+std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
 
     int vertex_count = matrix.getSize();
 
@@ -378,7 +378,7 @@ int main(int argc, char *argv[]) {
 
     AdjMatrix matrix = AdjMatrix(argv[1]);
     AdjList list = AdjList(argv[1]);
-    solve_instance(matrix, list);
+    solve_instance_josh(matrix, list);
 
 //     return 0;
 // }
