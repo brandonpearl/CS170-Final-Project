@@ -324,8 +324,8 @@ void do_brute_force(int *sub_array, int sub_size, AdjList list) {
 
 /*
 At this point, we have done brute force search on a number of subsets equal to
-num_subsets/orig_num, where each subset is of size subset_size. Now, we permute
-these subsets to try to find the best ordering of the subsets
+num_subsets, where each subset is of size subset_size. Now, we permute
+these subsets to try to find the best ordering of the subsets.
 Essentially we do brute force on the small subsets, then do approximation by
 moving around the order of the subsets in the larger array.
 */
@@ -340,7 +340,7 @@ void find_best_subset_ordering(int *subset_order, int num_subsets, int orig_num,
             int subset_to_pick = subset_ordering_base[i];
             if (subset_to_pick == orig_num) {
                 memcpy(curr_loc, subset_buff[subset_to_pick-1], sizeof(int)*(list.getSize()%subset_size));
-                curr_loc += list.getSize()%subset_size;
+                curr_loc += list.getSize() % subset_size;
             }
             else {
                 memcpy(curr_loc, subset_buff[subset_to_pick-1], sizeof(int)*subset_size);
