@@ -7,6 +7,8 @@ using namespace std;
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
+int debug = 0;
+
 /*
 #######################################################################
 The only thing you have to know to use this file, is to call the method
@@ -98,7 +100,7 @@ void swap_if_better(int *arr, int subset_count, int size, AdjList list) {
         memcpy(arr_cpy+curr_start+subset_count, buff, sizeof(int)*subset_count);
         int test_score = score_ordering(arr_cpy, list);
         if (test_score > curr_max_score) {
-            printf("Keeping swap version\n");
+            if (debug) printf("Keeping swap version\n");
             curr_max_score = test_score;
             memcpy(arr+curr_start, arr_cpy+curr_start, sizeof(int)*2*subset_count);
         }
@@ -118,14 +120,14 @@ void alg_shuffle(int *v_array, AdjMatrix matrix, AdjList list, int shuffle_count
     int i;
     for (i=0; i < shuffle_count; i++) {
         if (i%300 == 0 && time(NULL) - start_time > timeout) {
-            printf("Shuffling timing out after %d seconds.\n", timeout);
+            if (debug) printf("Shuffling timing out after %d seconds.\n", timeout);
             return;
         }
         shuffle(arr_cpy, vertex_count);
         int test_score = score_ordering(arr_cpy, list);
         if (test_score > curr_max_score) {
             memcpy(v_array, arr_cpy, sizeof(int)*vertex_count);
-            printf("Keeping shuffle version\n");
+            if (debug) printf("Keeping shuffle version\n");
             curr_max_score = test_score;
         }
     }
@@ -211,11 +213,11 @@ void alg_order_by_degree(int *v_array, int degrees[][2], AdjMatrix matrix, AdjLi
     int indegree_sort_score = score_ordering(sorted_by_indegree, list);
 
     if (outdegree_sort_score > indegree_sort_score && outdegree_sort_score > curr_score) {
-        printf("Choosing outdegree ordering\n");
+        if (debug) printf("Choosing outdegree ordering\n");
         memcpy(v_array, sorted_by_outdegree, sizeof(int)*size);
     }
     else if (indegree_sort_score > curr_score) {
-        printf("Choosing indegree ordering\n");
+        if (debug) printf("Choosing indegree ordering\n");
         memcpy(v_array, sorted_by_indegree, sizeof(int)*size);
     }
 }
@@ -244,7 +246,7 @@ void alg_greedy(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
     int start_vertex;
     for (start_vertex = 1; start_vertex <= size; start_vertex++) { // Every possible start vertex
         if (time(NULL) - start_time > timeout) {
-            printf("Greedy timing out after %d seconds.\n", timeout);
+            if (debug) printf("Greedy timing out after %d seconds.\n", timeout);
             return;
         }
         memcpy(remaining_vertices, sorted_v_array_buff, sizeof(int)*size);
@@ -275,7 +277,7 @@ void alg_greedy(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
         if (start_vertex_test_score > v_array_curr_score) {
             v_array_curr_score = start_vertex_test_score;
             memcpy(v_array, output_buff, sizeof(int)*size);
-            printf("Greedy ordering led to improvement\n");
+            if (debug) printf("Greedy ordering led to improvement\n");
         }
     }
 }
@@ -414,7 +416,7 @@ void alg_brute_force_on_subgroups(int *v_array, AdjMatrix matrix, AdjList list,
     int i;
     for (i=0; i<num_iterations; i++) {
         if (time(NULL) - start_time > timeout) {
-            printf("Brute force timing out after %d seconds.\n", timeout);
+            if (debug) printf("Brute force timing out after %d seconds.\n", timeout);
             return;
         }
         shuffle(v_array_cpy, list.getSize());
@@ -423,7 +425,7 @@ void alg_brute_force_on_subgroups(int *v_array, AdjMatrix matrix, AdjList list,
         if (test_score > curr_max_score) {
             curr_max_score = test_score;
             memcpy(v_array, v_array_cpy, sizeof(int)*list.getSize());
-            printf("Brute force on subgroups leads to improvement\n");
+            if (debug) printf("Brute force on subgroups leads to improvement\n");
         }
     }
 }
@@ -496,34 +498,34 @@ std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
     initialize_node_degrees(node_degrees, matrix);
 
     int initial_score = score_ordering(vertex_array, list);
-    printf("Initial, with score %d: ", initial_score);
-    print_array(vertex_array, matrix.getSize());
+    if (debug) printf("Initial, with score %d: ", initial_score);
+    if (debug) print_array(vertex_array, matrix.getSize());
 
-    printf("------ Sorting by degree ------\n");
+    if (debug) printf("------ Sorting by degree ------\n");
     alg_order_by_degree(vertex_array, node_degrees, matrix, list);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
-    printf("------ Brute Force on Subgroups ------\n");
+    if (debug) printf("------ Brute Force on Subgroups ------\n");
     alg_brute_force_on_subgroups(vertex_array, matrix, list, 5, 20);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
-    printf("------ Shuffling ------\n");
+    if (debug) printf("------ Shuffling ------\n");
     alg_shuffle(vertex_array, matrix, list, 100000, 20);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
-    printf("------ Greedy ------\n");
+    if (debug) printf("------ Greedy ------\n");
     alg_greedy(vertex_array, matrix, list, 20);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
 
     ensure_correct_format(vertex_array, vertex_count);
 
     int final_score = score_ordering(vertex_array, list);
-    printf("Final, with score %d: ", final_score);
-    print_array(vertex_array, matrix.getSize());
+    if (debug) printf("Final, with score %d: ", final_score);
+    if (debug) print_array(vertex_array, matrix.getSize());
 
     int score_diff = final_score - initial_score;
-    printf("Improved by %d points, which is %d%%\n", score_diff, 100*score_diff/initial_score);
+    if (debug) printf("Improved by %d points, which is %d%%\n", score_diff, 100*score_diff/initial_score);
     std::vector<int> v(vertex_array, vertex_array + vertex_count);
     return v;
 }
@@ -537,6 +539,8 @@ int main(int argc, char *argv[]) {
         printf("Need to supply instance filename\n");
         exit(1);
     }
+
+    debug = 1;
 
     AdjMatrix matrix = AdjMatrix(argv[1]);
     AdjList list = AdjList(argv[1]);
