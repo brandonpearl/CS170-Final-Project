@@ -34,6 +34,9 @@ Note that calling my solve_instance will run all of these algorithms by itself.
       and so we return the one that has the best score
 4. Sort by indegree ascdending, and outdegree descending, and retain if they lead to
     improvement.
+5. Break the problem into subgroups of size at most X. Then do a brute force on each
+of these subgroups (X is probably <= 10). Then, figure out the best way to combine
+these subgroups.
 
 
 Algorithms Implemented - Brandon
