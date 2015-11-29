@@ -15,6 +15,6 @@ vector<int> frugalDynamic(AdjMatrix matrix, AdjList list, int subSize) {
 
 }
 
-vector<int> solve_instance(AdjMatrix matrix, AdjList list) {
+vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 
 }
