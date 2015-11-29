@@ -131,7 +131,7 @@ void randomSolver (int* inp, int size, AdjList list) {
 //    } 
 //}
 
-std::vector<int> solve_instance(AdjMatrix matrix, AdjList list) {
+std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     int size = matrix.getSize();
     int vertex_array[size];
 
@@ -164,6 +164,6 @@ int main(int argc, char *argv[]) {
     AdjMatrix matrix (argv[1]);
     AdjList list (argv[1]);
 
-    solve_instance(matrix, list);
+    solve_instance_matt(matrix, list);
     return 0;
 }

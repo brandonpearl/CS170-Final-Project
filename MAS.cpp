@@ -1,8 +1,10 @@
 #include <iostream>
 #include "matt/processinput.h"
 #include "solutionScore.cpp"
+#include "solver_matt.cpp"
 #include <vector>
 #include "solver_josh.cpp"
+#include "solver_brandon.cpp"
 #include <limits.h>
 
 using namespace std;
@@ -23,7 +25,9 @@ int main(int argc, char *argv[]){
       vector<vector<int> > ranks;
 
       //All other rankings will be added accordingly
-      ranks.push_back(solve_instance(objectMatrix, objectList));
+      ranks.push_back(solve_instance_josh(objectMatrix, objectList));
+      ranks.push_back(solve_instance_matt(objectMatrix, objectList));
+      ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
 
       int score;
       vector<int> best;
