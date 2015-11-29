@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <chrono>
 using namespace std;
 
 int score_ordering(int *ordering, AdjList list) {
@@ -9,11 +10,34 @@ int score_ordering(int *ordering, AdjList list) {
     return scoreSolution(v, list);
 }
 
-void initialize_vertex_array(int *inp, int size) {
-    int i;
-    for (i=0; i < size; i++) {
+void initialize_vertex_array(int *inp, int size, AdjList list) {
+    for (int i=0; i < size; i++) {
         inp[i] = i+1;
     }
+    std::vector<int> v(inp, inp + size); 
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count(); 
+    auto gen = std::default_random_engine(seed);
+    shuffle(v.begin(), v.end(), gen);
+
+    // Pick either this or reverse. Whichever is bigger
+    int defScore = scoreSolution(v, list);
+    std::vector<int> copy(v);
+    for (int i=0; i<size; i++) {
+        copy[i] = v[size-i-1];
+    }
+    int revScore = scoreSolution(copy, list);
+    if (revScore > defScore){
+        v = copy;
+    }
+
+    printf("Naive ordering is: [");
+
+    for (int i=0; i < size; i++) {
+        printf("%d, ", v[i]);
+        inp[i] = v[i];
+    }
+    printf("]\n");
 }
 
 // orders nodes according to the following criteria:
@@ -108,48 +132,159 @@ void randomSolver (int* inp, int size, AdjList list) {
     return;
 }
 
-// Dad's idea
-//void optimalReorder(int* inp, int size, AdjMatrix matrix) {
-//    bool stop;
-//    set<int> in;
-//    set<int> out;
-//    int b = 0;
-//    int e = size-1;
-//    while (true) {
-//        stop = true;
-//        for (int i = 0; i < size; i++) {
-//            if (matrix.countIn(i, in) == 0) {
-//                in.insert(i);
-//                int temp = inp[b];
-//                inp[i]
-//            }
-//        }
-//         
-//        if (stop) {
-//            break;
-//        }
-//    } 
-//}
+// Compares each pair from (1,2) to (99,100) and switches
+// if the switch will be better
+void pairSwapForward (AdjList list, int* inp, int size) {
+    std::vector<int> v(inp, inp + size); 
+    int score = scoreSolution(v, list);
+    int newScore;
+    for (int i=0; i<100; i++) {
+        for (int j=i+1; j<100; j++) {
+            std::vector<int> copy(v);
+            int temp = copy[j];
+            copy[j] = copy[i];
+            copy[i] = temp;
+            newScore = scoreSolution(copy, list); 
+            if (newScore > score){
+                score = newScore;
+                v = copy;
+            }
+        }
+    }
+    for (int i=0; i < size; i++) {
+        inp[i] = v[i];
+    }
+    return;
+}
+
+// Compares each pair from (99,100) to (1,2) and switches
+// if the switch will be better
+void pairSwapBackward (AdjList list, int* inp, int size) {
+    std::vector<int> v(inp, inp + size); 
+    int score = scoreSolution(v, list);
+    int newScore;
+    for (int i=99; i>=0; i--) {
+        for (int j=i-1; j>=0; j--) {
+            std::vector<int> copy(v);
+            int temp = copy[j];
+            copy[j] = copy[i];
+            copy[i] = temp;
+            newScore = scoreSolution(copy, list); 
+            if (newScore > score){
+                score = newScore;
+                v = copy;
+            }
+        }
+    }
+    for (int i=0; i < size; i++) {
+        inp[i] = v[i];
+    }
+    return;
+}
+
+void copyIntArray (int* to, int* from, int size) {
+    for (int i=0; i<size; i++) {
+        to[i] = from[i];
+    }
+}
 
 std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     int size = matrix.getSize();
     int vertex_array[size];
+    int best_array[size];
+    int score;
+    int newScore;
+    int naiveScore;
+    initialize_vertex_array(vertex_array, size, list);
+    copyIntArray(best_array, vertex_array, size);
 
-    initialize_vertex_array(vertex_array, size);
-    int score = score_ordering(vertex_array, list);
+    score = score_ordering(vertex_array, list);
+    naiveScore = score;
     printf("Naive score is: %d\n", score);
 
     randomSolver(vertex_array, size, list);
-    score = score_ordering(vertex_array, list);
-    printf("randomSolver score is: %d\n", score);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("randomSolver score is: %d\n", newScore);
 
     greedyIncoming(matrix, vertex_array, size);
-    score = score_ordering(vertex_array, list);
-    printf("GreedyIncoming score is: %d\n", score);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("GreedyIncoming score is: %d\n", newScore);
 
     greedyOutgoing(matrix, vertex_array, size);
-    score = score_ordering(vertex_array, list);
-    printf("GreedyOutgoing score is: %d\n", score);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("GreedyOutgoing score is: %d\n", newScore);
+
+    pairSwapForward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapForward #1 score is: %d\n", newScore);
+
+    pairSwapBackward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapBackward #1 score is: %d\n", newScore);
+
+    pairSwapForward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapForward #2 score is: %d\n", newScore);
+
+    pairSwapBackward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapBackward #2 score is: %d\n", newScore);
+
+//    pairSwapForward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapForward #3 score is: %d\n", score);
+//
+//    pairSwapBackward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapBackward #3 score is: %d\n", score);
+//
+//    pairSwapForward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapForward #4 score is: %d\n", score);
+//
+//    pairSwapBackward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapBackward #4 score is: %d\n", score);
+//
+//    pairSwapForward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapForward #5 score is: %d\n", score);
+//
+//    pairSwapBackward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapBackward #5 score is: %d\n", score);
+
+    int scoreGain = score-naiveScore;
+    float percentGain = ((float)score - (float)naiveScore)/(float)naiveScore*(float)100;
+    printf("Improved by %d points, which is %f percent\n", scoreGain, percentGain);
 
     vector<int> best (vertex_array, vertex_array + size);
     return best;
