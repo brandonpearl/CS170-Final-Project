@@ -9,10 +9,14 @@
 #endif
 using namespace std;
 
-vector<int> frugalRoutine()
+vector<int> frugalRoutine() {
+
+}
 
 vector<int> frugalDynamic(AdjMatrix matrix, AdjList list, int subSize) {
 
+
+	
 }
 
 vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
