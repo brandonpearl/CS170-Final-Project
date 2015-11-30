@@ -14,9 +14,10 @@
 using namespace std;
 inline int min(int a, int b) {if (a>b) {return b;} else {return a;}}
 
-int scoreSolution(vector<int> rank, AdjList adj) {
-	int size = rank.size();
-	assert(size == adj.getSize());
+int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolution) {
+	if (fullSolution) {
+		assert(size == adj.getSize());
+	}
 	vector<bool> hasSeen (size, false);
 	int score = 0;
 	for (int i=0; i<size; i++) {
@@ -29,30 +30,18 @@ int scoreSolution(vector<int> rank, AdjList adj) {
 			}
 		}
 	}
-	for (int i=0; i<size; i++) {
+	for (int i=0; fullSolution && i<size; i++) {
 		assert(hasSeen[i]);
 	}
 	return score;
 }
 
-/*
-Used for Josh's greedy algorithm, where I build the output ordering one vertex
-at a time, based on which of the remaining nodes gives the best intermediate score.
-*/
-int scorePartialSolution(vector<int> rank, AdjList adj, int curr_sol_size) {
-	vector<bool> hasSeen(adj.getSize(), false);
-	int score = 0;
-	for (int i=0; i<curr_sol_size; i++) {
-		int node = rank[i] - 1;
-		hasSeen[node] = true;
-		set<int> adjacent = adj.allEdges(node);
-		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
-			if (!hasSeen[*j]) {
-				score++;
-			}
-		}
-	}
-	return score;
+int scorePartialSolution(vector<int> rank, AdjList adj, int size) {
+	return scoreSolutionGeneral(rank, adj, size, false);
+}
+
+int scoreSolution(vector<int> rank, AdjList adj) {
+	return scoreSolutionGeneral(rank, adj, rank.size(), true);
 }
 
 
