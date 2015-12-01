@@ -3,13 +3,23 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <list>
+#include <stack>
 using namespace std;
 
-int score_ordering(int *ordering, AdjList list) {
+//========================
+//====== UTILITIES =======
+//========================
+
+
+int matt_score_ordering(int *ordering, AdjList list) {
     std::vector<int> v(ordering, ordering + list.getSize());
     return scoreSolution(v, list);
 }
 
+// Initializes vertex array by picking a random order and seeing whether
+// it or its reverse returns a better score. Will set inp to be whichever
+// one returns the higher score
 void initialize_vertex_array(int *inp, int size, AdjList list) {
     for (int i=0; i < size; i++) {
         inp[i] = i+1;
@@ -31,6 +41,7 @@ void initialize_vertex_array(int *inp, int size, AdjList list) {
         v = copy;
     }
 
+    // Print this array out and set inp equal to it
     printf("Naive ordering is: [");
 
     for (int i=0; i < size; i++) {
@@ -39,6 +50,18 @@ void initialize_vertex_array(int *inp, int size, AdjList list) {
     }
     printf("]\n");
 }
+
+// Copies array "from" to "to", where both arrays have "size" size
+void copyIntArray (int* to, int* from, int size) {
+    for (int i=0; i<size; i++) {
+        to[i] = from[i];
+    }
+}
+
+
+//========================
+//====== ALGORITHMS ======
+//========================
 
 // orders nodes according to the following criteria:
 //  - Minimum total incoming nodes is first criteria
@@ -112,7 +135,7 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
     }
 }
 
-// generates 10,000 random orders and returns the max scoring one
+// generates 1,000 random orders and returns the max scoring one
 void randomSolver (int* inp, int size, AdjList list) {
     std::vector<int> v(inp, inp + size); 
     int score = scoreSolution(v, list);
@@ -182,11 +205,50 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
     return;
 }
 
-void copyIntArray (int* to, int* from, int size) {
-    for (int i=0; i<size; i++) {
-        to[i] = from[i];
-    }
-}
+// For each node:
+// - Run DFS starting from that node
+// - Return the nodes in topological order
+// Inspired by: http://www.geeksforgeeks.org/topological-sorting/
+//void topologicalSortUtil(AdjList list, int i, bool visited[], stack<int> &Stack){
+//    // Mark the current node as visited
+//    visited[i] = true;
+//
+//    // Recurse for all the vertices adjacent to this vertex
+//    set<int>::iterator begin = list.allEdges(i).begin();
+//    set<int>::iterator end = list.allEdges(i).end();
+//    set<int>::iterator iter;
+//    for (iter=begin; iter != end; ++iter) {
+//        if (!visited[*iter]) {
+//            topologicalSortUtil(list, *iter, visited, Stack);
+//        }
+//    }
+//
+//    Stack.push(i);
+//}
+//
+//void topologicalSort(AdjList list, int* inp, int size) {
+//    stack<int> Stack;
+//    bool visited[size];
+//    for (int i=0; i<size; i++) {
+//        visited[i] = false;
+//    }
+//
+//    for (int i=0; i<size; i++) {
+//        if (visited[i] == false) {
+//            topologicalSortUtil(list, i, visited, Stack);
+//        }
+//    }
+//    int i=0;
+//    while (Stack.empty() == false) {
+//        inp[i] = Stack.top();
+//        Stack.pop();
+//        i += 1;
+//    }
+//}
+
+//========================
+//======== SOLVER ========
+//========================
 
 std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     int size = matrix.getSize();
@@ -198,20 +260,29 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     initialize_vertex_array(vertex_array, size, list);
     copyIntArray(best_array, vertex_array, size);
 
-    score = score_ordering(vertex_array, list);
+    score = matt_score_ordering(vertex_array, list);
     naiveScore = score;
     printf("Naive score is: %d\n", score);
 
     randomSolver(vertex_array, size, list);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
     }
     printf("randomSolver score is: %d\n", newScore);
 
+//    topologicalSort(list, vertex_array, size);
+//    newScore = matt_score_ordering(vertex_array, list);
+//    if (newScore > score) {
+//        copyIntArray(best_array, vertex_array, size);
+//        score = newScore;
+//    }
+//    printf("topologicalSort score is: %d\n", newScore);
+
+
     greedyIncoming(matrix, vertex_array, size);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
@@ -219,7 +290,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     printf("GreedyIncoming score is: %d\n", newScore);
 
     greedyOutgoing(matrix, vertex_array, size);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
@@ -227,7 +298,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     printf("GreedyOutgoing score is: %d\n", newScore);
 
     pairSwapForward(list, vertex_array, size);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
@@ -235,7 +306,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     printf("pairSwapForward #1 score is: %d\n", newScore);
 
     pairSwapBackward(list, vertex_array, size);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
@@ -243,7 +314,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     printf("pairSwapBackward #1 score is: %d\n", newScore);
 
     pairSwapForward(list, vertex_array, size);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
@@ -251,36 +322,12 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     printf("pairSwapForward #2 score is: %d\n", newScore);
 
     pairSwapBackward(list, vertex_array, size);
-    newScore = score_ordering(vertex_array, list);
+    newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
     }
     printf("pairSwapBackward #2 score is: %d\n", newScore);
-
-//    pairSwapForward(list, vertex_array, size);
-//    score = score_ordering(vertex_array, list);
-//    printf("pairSwapForward #3 score is: %d\n", score);
-//
-//    pairSwapBackward(list, vertex_array, size);
-//    score = score_ordering(vertex_array, list);
-//    printf("pairSwapBackward #3 score is: %d\n", score);
-//
-//    pairSwapForward(list, vertex_array, size);
-//    score = score_ordering(vertex_array, list);
-//    printf("pairSwapForward #4 score is: %d\n", score);
-//
-//    pairSwapBackward(list, vertex_array, size);
-//    score = score_ordering(vertex_array, list);
-//    printf("pairSwapBackward #4 score is: %d\n", score);
-//
-//    pairSwapForward(list, vertex_array, size);
-//    score = score_ordering(vertex_array, list);
-//    printf("pairSwapForward #5 score is: %d\n", score);
-//
-//    pairSwapBackward(list, vertex_array, size);
-//    score = score_ordering(vertex_array, list);
-//    printf("pairSwapBackward #5 score is: %d\n", score);
 
     int scoreGain = score-naiveScore;
     float percentGain = ((float)score - (float)naiveScore)/(float)naiveScore*(float)100;
@@ -290,8 +337,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     return best;
 }
 
-
-int main(int argc, char *argv[]) {
+int matt_main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Need to supply instance filename\n");
         exit(1);
@@ -301,4 +347,8 @@ int main(int argc, char *argv[]) {
 
     solve_instance_matt(matrix, list);
     return 0;
+}
+
+int main(int argc, char *argv[]) {
+    return matt_main(argc, argv);
 }
