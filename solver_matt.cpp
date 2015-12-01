@@ -1,6 +1,8 @@
 #include "solutionScore.cpp"
 #include <vector>
 #include <iostream>
+#include <random>
+#include <chrono>
 using namespace std;
 
 int score_ordering(int *ordering, AdjList list) {
@@ -8,37 +10,281 @@ int score_ordering(int *ordering, AdjList list) {
     return scoreSolution(v, list);
 }
 
-void initialize_vertex_array(int *inp, int size) {
-    int i;
-    for (i=0; i < size; i++) {
+void initialize_vertex_array(int *inp, int size, AdjList list) {
+    for (int i=0; i < size; i++) {
         inp[i] = i+1;
+    }
+    std::vector<int> v(inp, inp + size); 
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count(); 
+    auto gen = std::default_random_engine(seed);
+    shuffle(v.begin(), v.end(), gen);
+
+    // Pick either this or reverse. Whichever is bigger
+    int defScore = scoreSolution(v, list);
+    std::vector<int> copy(v);
+    for (int i=0; i<size; i++) {
+        copy[i] = v[size-i-1];
+    }
+    int revScore = scoreSolution(copy, list);
+    if (revScore > defScore){
+        v = copy;
+    }
+
+    printf("Naive ordering is: [");
+
+    for (int i=0; i < size; i++) {
+        printf("%d, ", v[i]);
+        inp[i] = v[i];
+    }
+    printf("]\n");
+}
+
+// orders nodes according to the following criteria:
+//  - Minimum total incoming nodes is first criteria
+//  - If tied, max incoming from nodes already visited
+// Returns an int* with this ordering
+void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
+    int min;
+    int indexToAdd;
+    set<int> ignore;
+    set<int> notIgnore;
+    for (int i=0; i<size; i++) {
+        notIgnore.insert(i);
+    }
+
+    for (int r=0; r<size; r++) { // makes sure we repeat
+        min = 1000;
+        indexToAdd = 0;
+        for (int i=0; i<size; i++) {
+            if (ignore.find(i) == ignore.end()) { // if not on our ignore list
+                if (matrix.countIn(i, ignore) < min) {
+                    min = matrix.countIn(i, ignore);
+                    indexToAdd = i+1;
+                } else if (matrix.countIn(i, ignore) == min) {
+                    int newI = matrix.countOut(i, notIgnore);
+                    int oldI = matrix.countOut(indexToAdd, notIgnore);
+                    if (newI > oldI) {
+                        indexToAdd = i+1;
+                    }
+                }
+            }
+        }
+        inp[r] = indexToAdd;
+        ignore.insert(indexToAdd-1);
+        notIgnore.erase(indexToAdd-1);
     }
 }
 
-// will simply put the node with the most edges first and so on
-int* naive_greedy(AdjMatrix matrix, int size) {
-    int* num_edges[size];
-    for (int i=0; i<size; i++){
-        for (int j=0; j<size; j++){
-            if (matrix.edgeExists(i,j)) {
-                num_edges[i] += 1;
+// orders nodes according to the following criteria:
+//  - Maximum total outgoing nodes is first criteria
+//  - If tied, max incoming from nodes already visited
+// Returns an int* with this ordering
+void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
+    int max;
+    int indexToAdd;
+    set<int> ignore;
+    set<int> notIgnore;
+    for (int i=0; i<size; i++) {
+        notIgnore.insert(i);
+    }
+
+    for (int r=0; r<size; r++) { // makes sure we repeat
+        max = -1;
+        indexToAdd = 0;
+        for (int i=0; i<size; i++) {
+            if (ignore.find(i) == ignore.end()) { // if not on our ignore list
+                if (matrix.countOut(i, ignore) > max) {
+                    max = matrix.countOut(i, ignore);
+                    indexToAdd = i+1;
+                } else if (matrix.countOut(i, ignore) == max) {
+                    int newI = matrix.countIn(i, notIgnore);
+                    int oldI = matrix.countIn(indexToAdd, notIgnore);
+                    if (newI > oldI) {
+                        indexToAdd = i+1;
+                    }
+                }
+            }
+        }
+        inp[r] = indexToAdd;
+        ignore.insert(indexToAdd-1);
+        notIgnore.erase(indexToAdd-1);
+    }
+}
+
+// generates 10,000 random orders and returns the max scoring one
+void randomSolver (int* inp, int size, AdjList list) {
+    std::vector<int> v(inp, inp + size); 
+    int score = scoreSolution(v, list);
+    int newScore;
+    std::vector<int> copy(v);
+    for (int i=0; i<1000; i++) {
+        std::random_shuffle(copy.begin(), copy.end());
+        newScore = scoreSolution(copy, list); 
+        if (newScore > score){
+            score = newScore;
+            v = copy;
+        }
+    }
+    for (int i=0; i < size; i++) {
+        inp[i] = v[i];
+    }
+    return;
+}
+
+// Compares each pair from (1,2) to (99,100) and switches
+// if the switch will be better
+void pairSwapForward (AdjList list, int* inp, int size) {
+    std::vector<int> v(inp, inp + size); 
+    int score = scoreSolution(v, list);
+    int newScore;
+    for (int i=0; i<100; i++) {
+        for (int j=i+1; j<100; j++) {
+            std::vector<int> copy(v);
+            int temp = copy[j];
+            copy[j] = copy[i];
+            copy[i] = temp;
+            newScore = scoreSolution(copy, list); 
+            if (newScore > score){
+                score = newScore;
+                v = copy;
             }
         }
     }
+    for (int i=0; i < size; i++) {
+        inp[i] = v[i];
+    }
+    return;
+}
 
+// Compares each pair from (99,100) to (1,2) and switches
+// if the switch will be better
+void pairSwapBackward (AdjList list, int* inp, int size) {
+    std::vector<int> v(inp, inp + size); 
+    int score = scoreSolution(v, list);
+    int newScore;
+    for (int i=99; i>=0; i--) {
+        for (int j=i-1; j>=0; j--) {
+            std::vector<int> copy(v);
+            int temp = copy[j];
+            copy[j] = copy[i];
+            copy[i] = temp;
+            newScore = scoreSolution(copy, list); 
+            if (newScore > score){
+                score = newScore;
+                v = copy;
+            }
+        }
+    }
+    for (int i=0; i < size; i++) {
+        inp[i] = v[i];
+    }
+    return;
+}
 
+void copyIntArray (int* to, int* from, int size) {
+    for (int i=0; i<size; i++) {
+        to[i] = from[i];
+    }
 }
 
 std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     int size = matrix.getSize();
     int vertex_array[size];
+    int best_array[size];
+    int score;
+    int newScore;
+    int naiveScore;
+    initialize_vertex_array(vertex_array, size, list);
+    copyIntArray(best_array, vertex_array, size);
 
-    initialize_vertex_array(vertex_array, size);
-    int score = score_ordering(vertex_array, list);
-
+    score = score_ordering(vertex_array, list);
+    naiveScore = score;
     printf("Naive score is: %d\n", score);
 
+    randomSolver(vertex_array, size, list);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("randomSolver score is: %d\n", newScore);
 
+    greedyIncoming(matrix, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("GreedyIncoming score is: %d\n", newScore);
+
+    greedyOutgoing(matrix, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("GreedyOutgoing score is: %d\n", newScore);
+
+    pairSwapForward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapForward #1 score is: %d\n", newScore);
+
+    pairSwapBackward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapBackward #1 score is: %d\n", newScore);
+
+    pairSwapForward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapForward #2 score is: %d\n", newScore);
+
+    pairSwapBackward(list, vertex_array, size);
+    newScore = score_ordering(vertex_array, list);
+    if (newScore > score) {
+        copyIntArray(best_array, vertex_array, size);
+        score = newScore;
+    }
+    printf("pairSwapBackward #2 score is: %d\n", newScore);
+
+//    pairSwapForward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapForward #3 score is: %d\n", score);
+//
+//    pairSwapBackward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapBackward #3 score is: %d\n", score);
+//
+//    pairSwapForward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapForward #4 score is: %d\n", score);
+//
+//    pairSwapBackward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapBackward #4 score is: %d\n", score);
+//
+//    pairSwapForward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapForward #5 score is: %d\n", score);
+//
+//    pairSwapBackward(list, vertex_array, size);
+//    score = score_ordering(vertex_array, list);
+//    printf("pairSwapBackward #5 score is: %d\n", score);
+
+    int scoreGain = score-naiveScore;
+    float percentGain = ((float)score - (float)naiveScore)/(float)naiveScore*(float)100;
+    printf("Improved by %d points, which is %f percent\n", scoreGain, percentGain);
 
     vector<int> best (vertex_array, vertex_array + size);
     return best;

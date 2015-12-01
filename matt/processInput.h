@@ -5,9 +5,13 @@ using namespace std;
 
 /* Adjacency Matrix structure
  * - Constructor: to make a new instance called foo, use:
- *      AdjMatrix foo (filename);
+ *     AdjMatrix foo (filename);
  * - getSize(): returns the number of nodes in the graph
  * - edgeExists(i,j): returns TRUE if edge (i,j) exists, FALSE otherwise
+ * - countIn(int i, set<int> s): number of incoming edges to node i ignoring
+ *     ones from nodes in array a
+ * - countOut(int i, set<int> s): number of outgoing edges from node i ignoring
+ *     ones going to nodes in array a 
  */
 class AdjMatrix {
     int size;
@@ -53,6 +57,26 @@ class AdjMatrix {
 
     bool edgeExists(int i, int j){
         return matrix[i][j] == 1;
+    }
+
+    int countIn(int i, set<int> s){
+        int count = 0;
+        for(int j = 0; j < size; j++) {
+            if (s.find(j) == s.end()) { // if not on our ignore list
+                count += matrix[j][i]; // incoming is (j,i)
+            }
+        }
+        return count;
+    }
+
+    int countOut(int i, set<int> s){
+        int count = 0;
+        for(int j = 0; j < size; j++) {
+            if (s.find(j) == s.end()) { // if not on our ignore list
+                count += matrix[i][j]; // outgoing is (i,j)
+            }
+        }
+        return count;
     }
 
 } ;

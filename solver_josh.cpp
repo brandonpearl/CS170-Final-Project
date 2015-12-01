@@ -5,6 +5,19 @@
 #include <limits.h>
 using namespace std;
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+
+int debug = 0;
+
+/*
+#######################################################################
+The only thing you have to know to use this file, is to call the method
+std::vector<int> solve_instance(AdjMatrix matrix, AdjList list);
+Everything else is taken care of by this method. It will return to you the best
+solution this file has found.
+#######################################################################
+*/
+
 /*
 Utility method to print out the first 'size' elements of the input array, in
 a nice format.
@@ -87,7 +100,7 @@ void swap_if_better(int *arr, int subset_count, int size, AdjList list) {
         memcpy(arr_cpy+curr_start+subset_count, buff, sizeof(int)*subset_count);
         int test_score = score_ordering(arr_cpy, list);
         if (test_score > curr_max_score) {
-            printf("Keeping swap version\n");
+            if (debug) printf("Keeping swap version\n");
             curr_max_score = test_score;
             memcpy(arr+curr_start, arr_cpy+curr_start, sizeof(int)*2*subset_count);
         }
@@ -107,14 +120,14 @@ void alg_shuffle(int *v_array, AdjMatrix matrix, AdjList list, int shuffle_count
     int i;
     for (i=0; i < shuffle_count; i++) {
         if (i%300 == 0 && time(NULL) - start_time > timeout) {
-            printf("Shuffling timing out after %d seconds.\n", timeout);
+            if (debug) printf("Shuffling timing out after %d seconds.\n", timeout);
             return;
         }
         shuffle(arr_cpy, vertex_count);
         int test_score = score_ordering(arr_cpy, list);
         if (test_score > curr_max_score) {
             memcpy(v_array, arr_cpy, sizeof(int)*vertex_count);
-            printf("Keeping shuffle version\n");
+            if (debug) printf("Keeping shuffle version\n");
             curr_max_score = test_score;
         }
     }
@@ -191,9 +204,6 @@ void alg_order_by_degree(int *v_array, int degrees[][2], AdjMatrix matrix, AdjLi
         sorted_by_outdegree[num_chosen] = next_vertex;
     }
     int outdegree_sort_score = score_ordering(sorted_by_outdegree, list);
-    if (outdegree_sort_score > curr_score) {
-        printf("Outdegree sort is better than base\n");
-    }
 
     int sorted_by_indegree[size];
     for (num_chosen = 0; num_chosen < size; num_chosen++) {
@@ -201,16 +211,13 @@ void alg_order_by_degree(int *v_array, int degrees[][2], AdjMatrix matrix, AdjLi
         sorted_by_indegree[num_chosen] = next_vertex;
     }
     int indegree_sort_score = score_ordering(sorted_by_indegree, list);
-    if (indegree_sort_score > curr_score) {
-        printf("Indegree sort is better than base\n");
-    }
 
     if (outdegree_sort_score > indegree_sort_score && outdegree_sort_score > curr_score) {
-        printf("Choosing outdegree ordering\n");
+        if (debug) printf("Choosing outdegree ordering\n");
         memcpy(v_array, sorted_by_outdegree, sizeof(int)*size);
     }
     else if (indegree_sort_score > curr_score) {
-        printf("Choosing indegree ordering\n");
+        if (debug) printf("Choosing indegree ordering\n");
         memcpy(v_array, sorted_by_indegree, sizeof(int)*size);
     }
 }
@@ -239,7 +246,7 @@ void alg_greedy(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
     int start_vertex;
     for (start_vertex = 1; start_vertex <= size; start_vertex++) { // Every possible start vertex
         if (time(NULL) - start_time > timeout) {
-            printf("Greedy timing out after %d seconds.\n", timeout);
+            if (debug) printf("Greedy timing out after %d seconds.\n", timeout);
             return;
         }
         memcpy(remaining_vertices, sorted_v_array_buff, sizeof(int)*size);
@@ -270,7 +277,155 @@ void alg_greedy(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
         if (start_vertex_test_score > v_array_curr_score) {
             v_array_curr_score = start_vertex_test_score;
             memcpy(v_array, output_buff, sizeof(int)*size);
-            printf("Greedy ordering led to improvement\n");
+            if (debug) printf("Greedy ordering led to improvement\n");
+        }
+    }
+}
+
+
+/*
+Permute the input array, and choose the permutation with the best score, to be written
+to output_buff. Best not to use this on an input array of size larger than 8, as it can 
+get laggy.
+*/
+void do_permuration_and_score(int *arr, int size, int original_size, AdjList list, int *curr_score, int *output_buff) {
+    if (size == 0) {
+        int *arr_base = arr - original_size;
+        int test_score = score_partial_ordering(arr_base, list, original_size);
+        if (test_score > *curr_score) {
+            *curr_score = test_score;
+            memcpy(output_buff, arr_base, sizeof(int)*original_size);
+        }
+        return;
+    }
+    int i;
+    for (i=0; i<size; i++) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        do_permuration_and_score(arr+1, size-1, original_size, list, curr_score, output_buff);
+        arr[i] = arr[0];
+        arr[0] = temp;
+    }
+}
+
+
+/*
+Figure out the exact optimal solution, using brute force (try every ordering)
+Don't try to call this on large arrays, as this algorithm grows as O(size!).
+At the end of the method, sub_array will be reordered according to the absolute
+optimal possible for it.
+*/
+void do_brute_force(int *sub_array, int sub_size, AdjList list) {
+    int best_score = 0;
+    int buff[sub_size];
+    memcpy(buff, sub_array, sizeof(int)*sub_size);
+    do_permuration_and_score(sub_array, sub_size, sub_size, list, &best_score, buff);
+    memcpy(sub_array, buff, sizeof(int)*sub_size);
+}
+
+/*
+At this point, we have done brute force search on a number of subsets equal to
+num_subsets, where each subset is of size subset_size. Now, we permute
+these subsets to try to find the best ordering of the subsets.
+Essentially we do brute force on the small subsets, then do approximation by
+moving around the order of the subsets in the larger array.
+*/
+void find_best_subset_ordering(int *subset_order, int num_subsets, int orig_num, int **subset_buff, 
+                        int subset_size, AdjList list, int *curr_score, int *output_buff) {
+    int i;
+    if (num_subsets == 0) {
+        int *subset_ordering_base = subset_order - orig_num;
+        int test_output[list.getSize()];
+        int *curr_loc = test_output;
+        for (i=0; i<orig_num; i++) {
+            int subset_to_pick = subset_ordering_base[i];
+            if (subset_to_pick == orig_num) {
+                memcpy(curr_loc, subset_buff[subset_to_pick-1], sizeof(int)*(list.getSize()%subset_size));
+                curr_loc += list.getSize() % subset_size;
+            }
+            else {
+                memcpy(curr_loc, subset_buff[subset_to_pick-1], sizeof(int)*subset_size);
+                curr_loc += subset_size;
+            }
+        }
+        int test_score = score_ordering(test_output, list);
+        if (test_score > *curr_score) {
+            *curr_score = test_score;
+            memcpy(output_buff, test_output, sizeof(int)*list.getSize());
+        }
+        return;
+    }
+    for (i=0; i<num_subsets; i++) {
+        int temp = subset_order[0];
+        subset_order[0] = subset_order[i];
+        subset_order[i] = temp;
+        find_best_subset_ordering(subset_order+1, num_subsets-1, orig_num, 
+                            subset_buff, subset_size, list, curr_score, output_buff);
+        subset_order[i] = subset_order[0];
+        subset_order[0] = temp;
+    }
+}
+
+
+/*
+Break the v_array into subgroups of size at most subset_size. Do a brute force on each of these
+subgroups. Then, figure out the best way to combine these subgroups together.
+*/
+void divide_and_brute_force(int *v_array, AdjList list, int subset_size) {
+    int num_subsets = list.getSize()/subset_size+1;
+    int *subset_buff[num_subsets];
+    int i;
+    for (i=0; i<num_subsets; i++) {
+        subset_buff[i] = v_array + i*subset_size;
+    }
+    int *arr_end = v_array + list.getSize();
+    for (i=0; i<num_subsets; i++) {
+        int arr_length = MIN((int) (arr_end - subset_buff[i]), subset_size);
+        do_brute_force(subset_buff[i], arr_length, list);
+    }
+    // Find the best subset ordering
+    int num_subsets_for_permutation = MIN(num_subsets, 5); // limit # of permutations
+    int subset_size_for_permutation = list.getSize()/num_subsets_for_permutation + 1;
+    int subset_ordering_buff[num_subsets_for_permutation];
+    for (i=1; i<=num_subsets_for_permutation; i++) {
+        subset_ordering_buff[i-1] = i;
+    }
+    int *subset_buff_for_permutation[num_subsets_for_permutation];
+    for (i=0; i<num_subsets_for_permutation; i++) {
+        subset_buff_for_permutation[i] = v_array + i*subset_size_for_permutation;
+    }
+    int curr_max_score;
+    int output_buff[list.getSize()];
+    find_best_subset_ordering(subset_ordering_buff, num_subsets_for_permutation, num_subsets_for_permutation,
+                    subset_buff_for_permutation, subset_size_for_permutation, list, &curr_max_score, output_buff);
+    memcpy(v_array, output_buff, sizeof(int)*list.getSize());
+}
+
+
+/*
+Shuffle the input array num_iterations times, and for each iteration, send it to the
+divide_and_brute_force method to see if it can improve the ordering.
+*/
+void alg_brute_force_on_subgroups(int *v_array, AdjMatrix matrix, AdjList list, 
+                                int num_iterations, int timeout) {
+    int v_array_cpy[list.getSize()];
+    memcpy(v_array_cpy, v_array, sizeof(int)*list.getSize());
+    int curr_max_score = score_ordering(v_array_cpy, list);
+    time_t start_time = time(NULL);
+    int i;
+    for (i=0; i<num_iterations; i++) {
+        if (time(NULL) - start_time > timeout) {
+            if (debug) printf("Brute force timing out after %d seconds.\n", timeout);
+            return;
+        }
+        shuffle(v_array_cpy, list.getSize());
+        divide_and_brute_force(v_array_cpy, list, 7);
+        int test_score = score_ordering(v_array_cpy, list);
+        if (test_score > curr_max_score) {
+            curr_max_score = test_score;
+            memcpy(v_array, v_array_cpy, sizeof(int)*list.getSize());
+            if (debug) printf("Brute force on subgroups leads to improvement\n");
         }
     }
 }
@@ -342,33 +497,42 @@ std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
     int node_degrees[vertex_count][2];
     initialize_node_degrees(node_degrees, matrix);
 
-    printf("Initial, with score %d: ", score_ordering(vertex_array, list));
-    print_array(vertex_array, matrix.getSize());
+    int initial_score = score_ordering(vertex_array, list);
+    if (debug) printf("Initial, with score %d: ", initial_score);
+    if (debug) print_array(vertex_array, matrix.getSize());
 
-    printf("------ Sorting by degree ------\n");
+    if (debug) printf("------ Sorting by degree ------\n");
     alg_order_by_degree(vertex_array, node_degrees, matrix, list);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
-    printf("------ Shuffling ------\n");
-    alg_shuffle(vertex_array, matrix, list, 100000, 30);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Brute Force on Subgroups ------\n");
+    alg_brute_force_on_subgroups(vertex_array, matrix, list, 5, 20);
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
-    printf("------ Greedy begin ------\n");
-    alg_greedy(vertex_array, matrix, list, 90);
-    printf("------ Swapping ------\n");
+    if (debug) printf("------ Shuffling ------\n");
+    alg_shuffle(vertex_array, matrix, list, 100000, 20);
+    if (debug) printf("------ Swapping ------\n");
+    alg_swap(vertex_array, matrix, list);
+    if (debug) printf("------ Greedy ------\n");
+    alg_greedy(vertex_array, matrix, list, 20);
+    if (debug) printf("------ Swapping ------\n");
     alg_swap(vertex_array, matrix, list);
 
     ensure_correct_format(vertex_array, vertex_count);
 
-    printf("Final, with score %d: ", score_ordering(vertex_array, list));
-    print_array(vertex_array, matrix.getSize());
+    int final_score = score_ordering(vertex_array, list);
+    if (debug) printf("Final, with score %d: ", final_score);
+    if (debug) print_array(vertex_array, matrix.getSize());
 
+    int score_diff = final_score - initial_score;
+    if (debug) printf("Improved by %d points, which is %d%%\n", score_diff, 100*score_diff/initial_score);
     std::vector<int> v(vertex_array, vertex_array + vertex_count);
     return v;
 }
 
 /*
-For debugging and testing this file; can comment out to include this file with another.
+This main method is for debugging and testing this file; 
+can comment it out to include this file with another.
 */
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -376,12 +540,11 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    debug = 1;
+
     AdjMatrix matrix = AdjMatrix(argv[1]);
     AdjList list = AdjList(argv[1]);
     solve_instance_josh(matrix, list);
 
-//     return 0;
-// }
-=======
     return 0;
 }
