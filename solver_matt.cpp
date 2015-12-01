@@ -221,7 +221,7 @@ void topologicalSortUtil(AdjList list, int i, bool visited[], stack<int> &Stack)
     set<int>::iterator end = list.allEdges(i).end();
     printf("success\n");
     set<int>::iterator iter;
-    for (iter=begin; iter != end; ++iter) {
+    for (iter=list.allEdges(i).begin(); iter != list.allEdges(i).end(); ++iter) {
         printf("made it in the for loop\n");
         printf("begin: %p, end: %p\n", &begin, &end);
         printf("gonna check if we can visit node %d\n", *iter);
