@@ -1,4 +1,5 @@
 g++ -o MAS MAS.cpp
+> results.out 
 
 for i in `ls *.in | sort -g`
 do

@@ -13,10 +13,10 @@ using namespace std;
 int main(int argc, char *argv[]){
   //For now, will have to get called for each instance.
 
-      if (argc != 2) {
-          cout<<"Need to supply instance filename"<<endl;
-          exit(1);
-      }
+      // if (argc != 2) {
+      //     cout<<"Need to supply instance filename"<<endl;
+      //     exit(1);
+      // }
 
 
       AdjMatrix objectMatrix (argv[1]);
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]){
       //All other rankings will be added accordingly
       ranks.push_back(solve_instance_josh(objectMatrix, objectList));
       ranks.push_back(solve_instance_matt(objectMatrix, objectList));
-      //ranks.push_back(solve_instance_brandon(objectMatrix, objectList)); 
+      //ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
 
 
       int score;
