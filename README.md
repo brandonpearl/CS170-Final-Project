@@ -55,8 +55,19 @@ Algorithms Implemented - Matt
 2. Greedy Edges Forward: Order the nodes from most outgoing edges to least
 3. Greedy Edges Backwards: Order the nodes from least incoming edges to most
 4. Pure Random: Generate 1,000 random orders and return the max scoring one
-5. Pair Swap Forward: Swap each pair if it leads to a better score
-   - Iterate through the pairs in order
+5. Pair Swap Forward: Given an ordering, check each pair of indices
+   - If swapping those indices produces a better score, do so
+   - Iterate through the pairs in order:
+        - (1,2), (1,3), ... (1,100), (2,3), ... (98,100), (99,100)
+6. Pair Swap Backward: Given an ordering, check each pair of indices
+   - If swapping those indices produces a better score, do so
+   - Iterate through the pairs in order:
+        - (100,99), (100,98), ... (100,1), (99,98), ... (3,1), (2,1)
+7. Topological Sort: (may be useful if we're given a DAG)
+   For each node:
+   - Run DFS starting at that node and return the nodes in topological order
+   Return the highest-scoring order
+
 
 Bash Stuff - Ibrahim
 
