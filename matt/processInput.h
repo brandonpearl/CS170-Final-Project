@@ -18,6 +18,11 @@ class AdjMatrix {
     int** matrix;
 
   public:
+    /*
+     * Used in duplicate() method.
+     */
+    AdjMatrix() {size=0;}
+
     AdjMatrix(char* filename) {
         // Attempt to open the file
         ifstream inFile;
@@ -50,6 +55,44 @@ class AdjMatrix {
         }
         inFile.close();
     }   
+
+    /*
+     * Creates duplicate of matrix to prevent contamination. Used in topological sort.
+     */
+    AdjMatrix duplicate() {
+        AdjMatrix retVal = AdjMatrix();
+        retVal.size = size;
+        retVal.matrix = new int*[size];
+        for (int i=0; i<size; i++) {
+            retVal.matrix[i] = new int[size];
+            for (int j=0; j<size; j++) {
+                retVal.matrix[i][j] = matrix[i][j];
+            }
+        }
+        return retVal;
+    }
+
+    /*
+     * Returns whether an edge exists in the graph. Used in topological sort.
+     */
+    bool hasEdges() {
+        for (int i=0; i<size; i++) {
+            for (int j=0; j<size; j++) {
+                if (matrix[i][j] == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+     * Removes an edge from the graph. DO NOT USE UNLESS IT IS A COPY. Used in 
+     * topological sort.
+     */
+    void removeEdge(int i, int j) {
+        matrix[i][j] = 0;
+    }
 
     int getSize(){
         return size;
@@ -93,6 +136,9 @@ class AdjList {
     set<int>* list;
 
   public:
+    /*
+     * Used for testing purposes. Specifically, to check the output of the scoreSolution algorithm.
+     */
     AdjList (int s){
         size = s;
         list = new set<int>[size];
@@ -136,7 +182,6 @@ class AdjList {
         }
         inFile.close();
     }
-
 
     int getSize() {
         return size;
