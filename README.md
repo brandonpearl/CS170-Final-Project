@@ -47,8 +47,10 @@ Like Josh's, my solve_instance will pick the best result of all algorithms withi
 2. Frugal dynamic programming routine which performs a DP step on subproblems of size subSize or below.
 3. 
 
+
+Bash Stuff - Ibrahim
+
 When running on input <.in> files:
     - Add your quota of .in files locally to this directory
-    - run make
     - bash setup.sh 
 This bash script should call main on all files with the ".in" extension in your directory and output their results to the terminal. 

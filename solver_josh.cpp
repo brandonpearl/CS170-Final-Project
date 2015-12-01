@@ -1,4 +1,4 @@
-// #include "matt/processInput.h"
+
 #include "solutionScore.cpp"
 #include <vector>
 #include <assert.h>
@@ -285,7 +285,7 @@ void alg_greedy(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
 
 /*
 Permute the input array, and choose the permutation with the best score, to be written
-to output_buff. Best not to use this on an input array of size larger than 8, as it can 
+to output_buff. Best not to use this on an input array of size larger than 8, as it can
 get laggy.
 */
 void do_permuration_and_score(int *arr, int size, int original_size, AdjList list, int *curr_score, int *output_buff) {
@@ -331,7 +331,7 @@ these subsets to try to find the best ordering of the subsets.
 Essentially we do brute force on the small subsets, then do approximation by
 moving around the order of the subsets in the larger array.
 */
-void find_best_subset_ordering(int *subset_order, int num_subsets, int orig_num, int **subset_buff, 
+void find_best_subset_ordering(int *subset_order, int num_subsets, int orig_num, int **subset_buff,
                         int subset_size, AdjList list, int *curr_score, int *output_buff) {
     int i;
     if (num_subsets == 0) {
@@ -360,7 +360,7 @@ void find_best_subset_ordering(int *subset_order, int num_subsets, int orig_num,
         int temp = subset_order[0];
         subset_order[0] = subset_order[i];
         subset_order[i] = temp;
-        find_best_subset_ordering(subset_order+1, num_subsets-1, orig_num, 
+        find_best_subset_ordering(subset_order+1, num_subsets-1, orig_num,
                             subset_buff, subset_size, list, curr_score, output_buff);
         subset_order[i] = subset_order[0];
         subset_order[0] = temp;
@@ -407,7 +407,7 @@ void divide_and_brute_force(int *v_array, AdjList list, int subset_size) {
 Shuffle the input array num_iterations times, and for each iteration, send it to the
 divide_and_brute_force method to see if it can improve the ordering.
 */
-void alg_brute_force_on_subgroups(int *v_array, AdjMatrix matrix, AdjList list, 
+void alg_brute_force_on_subgroups(int *v_array, AdjMatrix matrix, AdjList list,
                                 int num_iterations, int timeout) {
     int v_array_cpy[list.getSize()];
     memcpy(v_array_cpy, v_array, sizeof(int)*list.getSize());
@@ -531,10 +531,10 @@ std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
 }
 
 /*
-This main method is for debugging and testing this file; 
+This main method is for debugging and testing this file;
 can comment it out to include this file with another.
 */
-int main(int argc, char *argv[]) {
+int josh_main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Need to supply instance filename\n");
         exit(1);
