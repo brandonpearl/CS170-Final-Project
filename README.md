@@ -69,6 +69,9 @@ Algorithms Implemented - Matt
    - Run DFS starting at that node and return the nodes in topological order
    Return the highest-scoring order
 
+Algorithms implemented - Ibrahim
+
+1. 
 
 Bash Stuff - Ibrahim
 
