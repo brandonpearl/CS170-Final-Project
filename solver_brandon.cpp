@@ -6,7 +6,7 @@
 #endif
 #ifndef _util
 #define _util
-#include "solutionScore.cpp"
+// #include "solutionScore.cpp"
 #include <vector>
 #include <stdlib.h>
 #endif
