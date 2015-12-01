@@ -4,3 +4,9 @@ Could not find file
 test.in
 Could not find file
 Could not find file
+test.in
+
+Starting solver_matt
+Naive score is: 0
+GreedyIncoming score is: 0
+GreedyOutgoing score is: 0
