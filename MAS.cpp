@@ -1,5 +1,4 @@
 #include <iostream>
-#include "matt/processinput.h"
 #include "solutionScore.cpp"
 #include "solver_matt.cpp"
 #include <vector>
@@ -17,10 +16,10 @@ int main(int argc, char *argv[]){
           exit(1);
       }
 
+
       AdjMatrix objectMatrix (argv[1]);
       AdjList objectList (argv[1]);
       int maxScore = INT_MIN;
-
       //All ranks stored here
       vector<vector<int> > ranks;
 
