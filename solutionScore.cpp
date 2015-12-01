@@ -9,7 +9,7 @@
 #endif
 #ifndef _adj
 #define _adj
-#include "matt/processinput.h"
+// #include "matt/processinput.h"
 #endif
 using namespace std;
 inline int min(int a, int b) {if (a>b) {return b;} else {return a;}}
@@ -20,6 +20,7 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 	}
 	vector<bool> hasSeen (size, false);
 	int score = 0;
+
 	for (int i=0; i<size; i++) {
 		int node = min(rank[i] - 1, size-1);
 		hasSeen[node] = true;
@@ -58,6 +59,7 @@ int brandon_test_main(int argc, char *argv[]) {
 	}
 	AdjList lst = AdjList(size);
 	vector<int> a;
+	a.reserve(size);
 	for (int i=1; i<=size; i++) {
 		a.push_back(i);
 	}

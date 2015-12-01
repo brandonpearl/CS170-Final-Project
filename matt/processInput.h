@@ -48,7 +48,7 @@ class AdjMatrix {
                 inFile.get(ch);
             }
         }
-
+        inFile.close();
     }   
 
     int getSize(){
@@ -81,9 +81,6 @@ class AdjMatrix {
 
 } ;
 
-
-
-
 /* Adjanceny List structure
  * - Constructor: to make a new instance called foo, use:
  *      AdjList foo (filename);
@@ -99,6 +96,7 @@ class AdjList {
     AdjList (int s){
         size = s;
         list = new set<int>[size];
+
         for (int i=0; i<size; i++) {
             for (int j=0; j<size; j++) {
                 int num = rand() % 2;
@@ -136,6 +134,7 @@ class AdjList {
                 inFile.get(ch);
             }
         }
+        inFile.close();
     }
 
 
