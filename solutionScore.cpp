@@ -59,6 +59,7 @@ int brandon_test_main(int argc, char *argv[]) {
 	}
 	AdjList lst = AdjList(size);
 	vector<int> a;
+	a.reserve(size);
 	for (int i=1; i<=size; i++) {
 		a.push_back(i);
 	}
