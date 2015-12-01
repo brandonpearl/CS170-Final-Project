@@ -11,11 +11,20 @@ using namespace std;
 //====== UTILITIES =======
 //========================
 
-
 int matt_score_ordering(int *ordering, AdjList list) {
     std::vector<int> v(ordering, ordering + list.getSize());
-    printf("made it here fucker\n");
     return scoreSolution(v, list);
+}
+
+void matt_print_array(int *inp, int size) {
+    printf("[");
+    int  count=0;
+    for (int i=0; i<size; i++){
+        printf(" %d", inp[i]);
+        count++;
+    }
+    printf("]\n");
+    printf("size is: %d\n", count);
 }
 
 // Initializes vertex array by picking a random order and seeing whether
@@ -216,8 +225,8 @@ void topologicalSortUtil(AdjList list, int i, int size, bool* visited, stack<int
     visited[i] = true;
 
     // Recurse for all the vertices adjacent to this vertex
-    for (int n=0; n<size; n++){
-        if (list.edgeExists(i,n)&&(!visited[n])) {
+    for (int n=1; n<size+1; n++){
+        if (list.edgeExists(i-1,n-1)&&(!visited[n])) {
             topologicalSortUtil(list, n, size, visited, Stack);
         }
     }
@@ -227,21 +236,39 @@ void topologicalSortUtil(AdjList list, int i, int size, bool* visited, stack<int
 
 void topologicalSort(AdjList list, int* inp, int size) {
     stack<int> Stack;
-    bool visited[size];
-    for (int i=0; i<size; i++) {
-        visited[i] = false;
-    }
+    int bestScore = 0;
+    for (int s=1; s<size+1; s++) {
+        int temp[size];
+        bool visited[size+1];
 
-    for (int i=0; i<size; i++) {
-        if (visited[i] == false) {
-            topologicalSortUtil(list, i, size, visited, Stack);
+        for (int i=1; i<size+1; i++) {
+            visited[i] = false;
         }
-    }
-    int i=0;
-    while (!Stack.empty()) {
-        inp[i] = Stack.top();
-        Stack.pop();
-        i += 1;
+
+        for (int i=s; i<size+1; i++) {
+            if (visited[i] == false) {
+                topologicalSortUtil(list, i, size, visited, Stack);
+            }
+        }
+        for (int i=1; i<s; i++) {
+            if (visited[i] == false) {
+                topologicalSortUtil(list, i, size, visited, Stack);
+            }
+        }
+
+        int i=0;
+        while (!Stack.empty()) {
+            temp[i] = Stack.top();
+            Stack.pop();
+            i += 1;
+        }
+        int newScore = matt_score_ordering(temp, list);
+        if (newScore > bestScore){
+            bestScore = newScore;
+            for (int i=0; i<size; i++){
+                inp[i] = temp[i];
+            }
+        }
     }
     return;
 }
@@ -271,6 +298,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     //    score = newScore;
     //}
     //printf("randomSolver score is: %d\n", newScore);
+
 
     topologicalSort(list, vertex_array, size);
     newScore = matt_score_ordering(vertex_array, list);

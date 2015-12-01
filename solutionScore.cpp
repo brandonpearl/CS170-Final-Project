@@ -20,6 +20,7 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 	}
 	vector<bool> hasSeen (size, false);
 	int score = 0;
+
 	for (int i=0; i<size; i++) {
 		int node = min(rank[i] - 1, size-1);
 		hasSeen[node] = true;
