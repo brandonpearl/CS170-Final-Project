@@ -210,42 +210,49 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
 // - Return the nodes in topological order
 // Inspired by: http://www.geeksforgeeks.org/topological-sorting/
 
-//void topologicalSortUtil(AdjList list, int i, bool visited[], stack<int> &Stack){
-//    // Mark the current node as visited
-//    visited[i] = true;
-//
-//    // Recurse for all the vertices adjacent to this vertex
-//    set<int>::iterator begin = list.allEdges(i).begin();
-//    set<int>::iterator end = list.allEdges(i).end();
-//    set<int>::iterator iter;
-//    for (iter=begin; iter != end; ++iter) {
-//        if (!visited[*iter]) {
-//            topologicalSortUtil(list, *iter, visited, Stack);
-//        }
-//    }
-//
-//    Stack.push(i);
-//}
-//
-//void topologicalSort(AdjList list, int* inp, int size) {
-//    stack<int> Stack;
-//    bool visited[size];
-//    for (int i=0; i<size; i++) {
-//        visited[i] = false;
-//    }
-//
-//    for (int i=0; i<size; i++) {
-//        if (visited[i] == false) {
-//            topologicalSortUtil(list, i, visited, Stack);
-//        }
-//    }
-//    int i=0;
-//    while (Stack.empty() == false) {
-//        inp[i] = Stack.top();
-//        Stack.pop();
-//        i += 1;
-//    }
-//}
+void topologicalSortUtil(AdjList list, int i, bool visited[], stack<int> &Stack){
+    // Mark the current node as visited
+    visited[i] = true;
+
+    // Recurse for all the vertices adjacent to this vertex
+    printf("about to begin on node: %d\n", i);
+    set<int>::iterator begin = list.allEdges(i).begin();
+    printf("about to end on node: %d\n", i);
+    set<int>::iterator end = list.allEdges(i).end();
+    printf("success\n");
+    set<int>::iterator iter;
+    for (iter=begin; iter != end; ++iter) {
+        printf("made it in the for loop\n");
+        printf("begin: %p, end: %p\n", &begin, &end);
+        printf("gonna check if we can visit node %d\n", *iter);
+        if (!visited[*iter]) {
+            printf("about to visit node: %d\n", *iter);
+            topologicalSortUtil(list, *iter, visited, Stack);
+        }
+    }
+
+    Stack.push(i);
+}
+
+void topologicalSort(AdjList list, int* inp, int size) {
+    stack<int> Stack;
+    bool visited[size];
+    for (int i=0; i<size; i++) {
+        visited[i] = false;
+    }
+
+    for (int i=0; i<size; i++) {
+        if (visited[i] == false) {
+            topologicalSortUtil(list, i, visited, Stack);
+        }
+    }
+    int i=0;
+    while (Stack.empty() == false) {
+        inp[i] = Stack.top();
+        Stack.pop();
+        i += 1;
+    }
+}
 
 //========================
 //======== SOLVER ========
@@ -265,21 +272,21 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     naiveScore = score;
     printf("Naive score is: %d\n", score);
 
-    randomSolver(vertex_array, size, list);
+    //randomSolver(vertex_array, size, list);
+    //newScore = matt_score_ordering(vertex_array, list);
+    //if (newScore > score) {
+    //    copyIntArray(best_array, vertex_array, size);
+    //    score = newScore;
+    //}
+    //printf("randomSolver score is: %d\n", newScore);
+
+    topologicalSort(list, vertex_array, size);
     newScore = matt_score_ordering(vertex_array, list);
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;
     }
-    printf("randomSolver score is: %d\n", newScore);
-
-//    topologicalSort(list, vertex_array, size);
-//    newScore = matt_score_ordering(vertex_array, list);
-//    if (newScore > score) {
-//        copyIntArray(best_array, vertex_array, size);
-//        score = newScore;
-//    }
-//    printf("topologicalSort score is: %d\n", newScore);
+    printf("topologicalSort score is: %d\n", newScore);
 
 
     greedyIncoming(matrix, vertex_array, size);
@@ -350,6 +357,6 @@ int matt_main(int argc, char *argv[]) {
     return 0;
 }
 
-//int main(int argc, char *argv[]) {
-//    return matt_main(argc, argv);
-//}
+int main(int argc, char *argv[]) {
+    return matt_main(argc, argv);
+}
