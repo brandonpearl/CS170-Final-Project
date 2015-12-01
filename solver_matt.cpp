@@ -14,6 +14,7 @@ using namespace std;
 
 int matt_score_ordering(int *ordering, AdjList list) {
     std::vector<int> v(ordering, ordering + list.getSize());
+    printf("made it here fucker\n");
     return scoreSolution(v, list);
 }
 
@@ -210,28 +211,18 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
 // - Return the nodes in topological order
 // Inspired by: http://www.geeksforgeeks.org/topological-sorting/
 
-void topologicalSortUtil(AdjList list, int i, bool visited[], stack<int> &Stack){
+void topologicalSortUtil(AdjList list, int i, int size, bool* visited, stack<int> &Stack){
     // Mark the current node as visited
     visited[i] = true;
 
     // Recurse for all the vertices adjacent to this vertex
-    printf("about to begin on node: %d\n", i);
-    set<int>::iterator begin = list.allEdges(i).begin();
-    printf("about to end on node: %d\n", i);
-    set<int>::iterator end = list.allEdges(i).end();
-    printf("success\n");
-    set<int>::iterator iter;
-    for (iter=list.allEdges(i).begin(); iter != list.allEdges(i).end(); ++iter) {
-        printf("made it in the for loop\n");
-        printf("begin: %p, end: %p\n", &begin, &end);
-        printf("gonna check if we can visit node %d\n", *iter);
-        if (!visited[*iter]) {
-            printf("about to visit node: %d\n", *iter);
-            topologicalSortUtil(list, *iter, visited, Stack);
+    for (int n=0; n<size; n++){
+        if (list.edgeExists(i,n)&&(!visited[n])) {
+            topologicalSortUtil(list, n, size, visited, Stack);
         }
     }
-
     Stack.push(i);
+    return;
 }
 
 void topologicalSort(AdjList list, int* inp, int size) {
@@ -243,15 +234,16 @@ void topologicalSort(AdjList list, int* inp, int size) {
 
     for (int i=0; i<size; i++) {
         if (visited[i] == false) {
-            topologicalSortUtil(list, i, visited, Stack);
+            topologicalSortUtil(list, i, size, visited, Stack);
         }
     }
     int i=0;
-    while (Stack.empty() == false) {
+    while (!Stack.empty()) {
         inp[i] = Stack.top();
         Stack.pop();
         i += 1;
     }
+    return;
 }
 
 //========================
@@ -282,6 +274,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
 
     topologicalSort(list, vertex_array, size);
     newScore = matt_score_ordering(vertex_array, list);
+    printf("successfully finished\n");
     if (newScore > score) {
         copyIntArray(best_array, vertex_array, size);
         score = newScore;

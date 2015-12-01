@@ -45,15 +45,25 @@ int main(int argc, char *argv[]) {
         printf("\n");
     }
 
-    return 0;
-
+    int countl=0;
+    int countm=0;
     for (int i=0; i<size; i++) {
         for (int j=0; j<size; j++) {
             bool m = adjM.edgeExists(i, j);
             bool l = adjL.edgeExists(i, j);
             assert(m==l);
+            if (l) {
+                countl++;
+            }
+            if (m) {
+                countm++;
+            }
         }
     }
-    printf("success");
+    printf("final list count was: %d\n", countl);
+    printf("final matrix count was: %d\n", countm);
+    printf("success\n");
+
+    return 0;
 
 }
