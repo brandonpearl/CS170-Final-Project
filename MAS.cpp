@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int mas_main(int argc, char *argv[]){
+int main(int argc, char *argv[]){
   //For now, will have to get called for each instance.
 
       if (argc != 2) {
