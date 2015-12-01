@@ -43,9 +43,10 @@ Algorithms Implemented - Brandon
 
 Like Josh's, my solve_instance will pick the best result of all algorithms within the .cpp file.
 
-1. Monte Carlo-style swapping: swap individual indices x times, but only perform the swap if the score improves.
+1. Monte Carlo-style swapping: swap random indices x times, but only perform the swap if the score improves.
 2. Frugal dynamic programming routine which performs a DP step on subproblems of size subSize or below.
-3. 
+3. Another Topological Sort Algorithm
+4. Greedy with a heuristic of the least indegree minus outdegree.
 
 
 Algorithms Implemented - Matt
