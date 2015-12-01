@@ -1,14 +1,12 @@
 #include <iostream>
-#include "solutionScore.cpp"
 #include "solver_matt.cpp"
 #include <vector>
-#include "solver_josh.cpp"
 #include "solver_brandon.cpp"
 #include <limits.h>
 
 using namespace std;
 
-int main(int argc, char *argv[]){
+int mas_main(int argc, char *argv[]){
   //For now, will have to get called for each instance.
 
       if (argc != 2) {

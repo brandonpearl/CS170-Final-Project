@@ -1,4 +1,4 @@
-#include "solutionScore.cpp"
+#include "solver_josh.cpp"
 #include <vector>
 #include <iostream>
 #include <random>
@@ -24,9 +24,9 @@ void initialize_vertex_array(int *inp, int size, AdjList list) {
     for (int i=0; i < size; i++) {
         inp[i] = i+1;
     }
-    std::vector<int> v(inp, inp + size); 
+    std::vector<int> v(inp, inp + size);
 
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count(); 
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     auto gen = std::default_random_engine(seed);
     shuffle(v.begin(), v.end(), gen);
 
@@ -137,13 +137,13 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
 
 // generates 1,000 random orders and returns the max scoring one
 void randomSolver (int* inp, int size, AdjList list) {
-    std::vector<int> v(inp, inp + size); 
+    std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
     std::vector<int> copy(v);
     for (int i=0; i<1000; i++) {
         std::random_shuffle(copy.begin(), copy.end());
-        newScore = scoreSolution(copy, list); 
+        newScore = scoreSolution(copy, list);
         if (newScore > score){
             score = newScore;
             v = copy;
@@ -158,7 +158,7 @@ void randomSolver (int* inp, int size, AdjList list) {
 // Compares each pair from (1,2) to (99,100) and switches
 // if the switch will be better
 void pairSwapForward (AdjList list, int* inp, int size) {
-    std::vector<int> v(inp, inp + size); 
+    std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
     for (int i=0; i<100; i++) {
@@ -167,7 +167,7 @@ void pairSwapForward (AdjList list, int* inp, int size) {
             int temp = copy[j];
             copy[j] = copy[i];
             copy[i] = temp;
-            newScore = scoreSolution(copy, list); 
+            newScore = scoreSolution(copy, list);
             if (newScore > score){
                 score = newScore;
                 v = copy;
@@ -183,7 +183,7 @@ void pairSwapForward (AdjList list, int* inp, int size) {
 // Compares each pair from (99,100) to (1,2) and switches
 // if the switch will be better
 void pairSwapBackward (AdjList list, int* inp, int size) {
-    std::vector<int> v(inp, inp + size); 
+    std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
     for (int i=99; i>=0; i--) {
@@ -192,7 +192,7 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
             int temp = copy[j];
             copy[j] = copy[i];
             copy[i] = temp;
-            newScore = scoreSolution(copy, list); 
+            newScore = scoreSolution(copy, list);
             if (newScore > score){
                 score = newScore;
                 v = copy;
