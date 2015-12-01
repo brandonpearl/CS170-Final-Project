@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
 
     int size = adjM.getSize();
 
+
     // Prints out the adjacency matrix (to check)
     printf("The adjancency matrix is:\n");
     for (int i=0; i < size; i++) {
@@ -32,14 +33,6 @@ int main(int argc, char *argv[]) {
 
     printf("\n");
 
-    // makes sure adjancencies in list and matrix follow
-    assert(adjM.edgeExists(0,6));
-    assert(!adjM.edgeExists(9,1));
-    assert(adjM.edgeExists(4,7));
-    assert(!adjM.edgeExists(5,5));
-    assert(adjM.edgeExists(8,2));
-
-
     // Prints out the adjaceny list (to check)
     printf("The adjancency list is:\n");
     for (int i=0; i < size; i++) {
@@ -52,12 +45,15 @@ int main(int argc, char *argv[]) {
         printf("\n");
     }
 
-    // makes sure adjancencies in list and matrix follow
-    assert(adjL.edgeExists(0,6));
-    assert(!adjL.edgeExists(9,1));
-    assert(adjL.edgeExists(4,7));
-    assert(!adjL.edgeExists(5,5));
-    assert(adjL.edgeExists(8,2));
-
     return 0;
+
+    for (int i=0; i<size; i++) {
+        for (int j=0; j<size; j++) {
+            bool m = adjM.edgeExists(i, j);
+            bool l = adjL.edgeExists(i, j);
+            assert(m==l);
+        }
+    }
+    printf("success");
+
 }
