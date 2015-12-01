@@ -48,6 +48,10 @@ Like Josh's, my solve_instance will pick the best result of all algorithms withi
 3. 
 
 
+Algorithms Implemented - Matt
+
+1. Greedy Edges Forward: Put
+
 Bash Stuff - Ibrahim
 
 When running on input <.in> files:
