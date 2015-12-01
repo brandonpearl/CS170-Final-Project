@@ -209,6 +209,7 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
 // - Run DFS starting from that node
 // - Return the nodes in topological order
 // Inspired by: http://www.geeksforgeeks.org/topological-sorting/
+
 //void topologicalSortUtil(AdjList list, int i, bool visited[], stack<int> &Stack){
 //    // Mark the current node as visited
 //    visited[i] = true;
@@ -349,6 +350,6 @@ int matt_main(int argc, char *argv[]) {
     return 0;
 }
 
-int main(int argc, char *argv[]) {
-    return matt_main(argc, argv);
-}
+//int main(int argc, char *argv[]) {
+//    return matt_main(argc, argv);
+//}
