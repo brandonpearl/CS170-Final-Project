@@ -10,3 +10,18 @@ Starting solver_matt
 Naive score is: 0
 GreedyIncoming score is: 0
 GreedyOutgoing score is: 0
+test30.in
+
+Starting solver_matt
+Naive score is: 1604
+GreedyIncoming score is: 1752
+GreedyOutgoing score is: 1763
+pairSwapForward #1 score is: 1847
+pairSwapBackward #1 score is: 1865
+pairSwapForward #2 score is: 1879
+pairSwapBackward #2 score is: 1887
+Improved by 283 points, which is 17.6434 percent
+Optimal rank for given instance: 
+[89, 64, 10, 68, 21, 79, 83, 84, 70, 28, 6, 36, 11, 26, 94, 62, 1, 43, 37, 16, 46, 24, 86, 12, 69, 88, 58, 76, 30, 7, 93, 47, 2, 38, 59, 8, 75, 54, 41, 67, 42, 50, 74, 31, 57, 49, 27, 9, 13, 29, 85, 91, 78, 40, 53, 19, 95, 17, 14, 99, 20, 51, 92, 18, 45, 77, 23, 65, 82, 35, 71, 22, 73, 60, 63, 34, 32, 80, 98, 5, 72, 4, 52, 87, 3, 81, 100, 15, 48, 90, 96, 56, 44, 39, 61, 55, 97, 33, 66, 25, ]
+test50.in
+test70.in
