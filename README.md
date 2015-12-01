@@ -50,7 +50,13 @@ Like Josh's, my solve_instance will pick the best result of all algorithms withi
 
 Algorithms Implemented - Matt
 
-1. Greedy Edges Forward: Put
+1. Random and Reverse: Generate a random ordering and its reverse. Use the one with
+   highest score
+2. Greedy Edges Forward: Order the nodes from most outgoing edges to least
+3. Greedy Edges Backwards: Order the nodes from least incoming edges to most
+4. Pure Random: Generate 1,000 random orders and return the max scoring one
+5. Pair Swap Forward: Swap each pair if it leads to a better score
+   - Iterate through the pairs in order
 
 Bash Stuff - Ibrahim
 
