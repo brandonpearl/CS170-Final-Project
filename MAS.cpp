@@ -2,11 +2,11 @@
 #include <vector>
 #include <limits.h>
 
-// #include "matt/processInput.h"
-// #include "solutionScore.cpp"
+#include "matt/processInput.h"
+#include "solutionScore.h"
 #include "solver_josh.cpp"
 #include "solver_matt.cpp"
-// #include "solver_brandon.cpp"
+#include "solver_brandon.cpp"
 
 using namespace std;
 

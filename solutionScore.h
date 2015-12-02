@@ -2,6 +2,7 @@
 #define _io
 #include <iostream>
 #include <assert.h>
+#include <stdio.h>
 #endif
 #ifndef _vector
 #define _vector
@@ -13,6 +14,7 @@
 #endif
 using namespace std;
 inline int min(int a, int b) {if (a>b) {return b;} else {return a;}}
+inline int max(int a, int b) {if (a>b) {return a;} else {return b;}}
 
 int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolution) {
 	if (fullSolution) {

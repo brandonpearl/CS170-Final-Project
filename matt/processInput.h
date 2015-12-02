@@ -1,4 +1,9 @@
+#ifndef _io
+#define _io
 #include <iostream>
+#include <assert.h>
+#include <stdio.h>
+#endif
 #include <fstream>
 #include <set>
 using namespace std;
@@ -21,7 +26,9 @@ class AdjMatrix {
     /*
      * Used in duplicate() method.
      */
-    AdjMatrix() {size=0;}
+    AdjMatrix() {
+        size = 0;
+    }
 
     AdjMatrix(char* filename) {
         // Attempt to open the file

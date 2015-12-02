@@ -1,4 +1,4 @@
-#include "solutionScore.cpp"
+#include "solutionScore.h"
 #include <vector>
 #include <assert.h>
 #include <limits.h>

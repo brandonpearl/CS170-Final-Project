@@ -4,7 +4,8 @@
 #include <chrono>
 #include <list>
 #include <stack>
-// #include "matt/processInput.h"
+#include "matt/processInput.h"
+#include "solutionScore.h"
 // #include "solver_josh.cpp"
 using namespace std;
 
