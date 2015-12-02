@@ -45,6 +45,12 @@ vector<int> run_algs(char *filename) {
 }
 
 
+/* 
+Can either do
+  ./MAS filename.in to run on one file
+  OR
+  ./MAS X Y to run from X.in to Y.in and generate an output file
+*/
 int main(int argc, char *argv[]){
 
   if (argc == 2) {
