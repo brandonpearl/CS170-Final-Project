@@ -37,6 +37,8 @@ Note that calling my solve_instance will run all of these algorithms by itself.
 5. Break the problem into subgroups of size at most X. Then do a brute force on each
 of these subgroups (X is probably <= 10). Then, figure out the best way to combine
 these subgroups.
+6. Consider all possible pairs (max is 4950) in a random order. Swap positions if
+it leads to improvement.
 
 
 Algorithms Implemented - Brandon
