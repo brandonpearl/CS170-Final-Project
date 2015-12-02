@@ -73,7 +73,7 @@ Algorithms Implemented - Matt
 
 Algorithms implemented - Ibrahim
 
-1. 
+1. - Generate random permutations of input (e.g. permutations of first n nodes vs last n nodes vs combined) 
 
 Bash Stuff - Ibrahim
 
