@@ -1,13 +1,13 @@
-
-// #include "solutionScore.cpp"
+#include "solutionScore.cpp"
 #include <vector>
 #include <assert.h>
 #include <limits.h>
 using namespace std;
 
-#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MIN_VAL(a,b) (((a)<(b))?(a):(b))
+#define MAX_VAL(a,b) (((a)<(b))?(b):(a))
 
-int debug = 1;
+int debug = 0;
 
 /*
 #######################################################################
@@ -17,6 +17,8 @@ Everything else is taken care of by this method. It will return to you the best
 solution this file has found.
 #######################################################################
 */
+
+void initialize_vertex_array(int *inp, int size);
 
 /*
 Utility method to print out the first 'size' elements of the input array, in
@@ -243,12 +245,19 @@ void alg_greedy(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
     int remaining_vertices[size];
     int v_array_curr_score = score_ordering(v_array, list);
     time_t start_time = time(NULL);
+    int start_choices[size];
+    int i;
+    for (i = 0; i < size; i++) {
+        start_choices[i] = i+1;
+    }
+    shuffle(start_choices, size); // Randomize start choices
     int start_vertex;
-    for (start_vertex = 1; start_vertex <= size; start_vertex++) { // Every possible start vertex
+    for (i = 0; i < size; i++) { // Every possible start vertex
         if (time(NULL) - start_time > timeout) {
             if (debug) printf("Greedy timing out after %d seconds.\n", timeout);
             return;
         }
+        start_vertex = start_choices[i];
         memcpy(remaining_vertices, sorted_v_array_buff, sizeof(int)*size);
         output_buff[0] = start_vertex;
         remaining_vertices[start_vertex-1] = -1;
@@ -381,11 +390,11 @@ void divide_and_brute_force(int *v_array, AdjList list, int subset_size) {
     }
     int *arr_end = v_array + list.getSize();
     for (i=0; i<num_subsets; i++) {
-        int arr_length = MIN((int) (arr_end - subset_buff[i]), subset_size);
+        int arr_length = MIN_VAL((int) (arr_end - subset_buff[i]), subset_size);
         do_brute_force(subset_buff[i], arr_length, list);
     }
     // Find the best subset ordering
-    int num_subsets_for_permutation = MIN(num_subsets, 5); // limit # of permutations
+    int num_subsets_for_permutation = MIN_VAL(num_subsets, 5); // limit # of permutations
     int subset_size_for_permutation = list.getSize()/num_subsets_for_permutation + 1;
     int subset_ordering_buff[num_subsets_for_permutation];
     for (i=1; i<=num_subsets_for_permutation; i++) {
@@ -429,6 +438,64 @@ void alg_brute_force_on_subgroups(int *v_array, AdjMatrix matrix, AdjList list,
         }
     }
 }
+
+/*
+Consider all pairs in a random order, and swap if it leads to improvement.
+*/
+void alg_swap_all_pairs(int *v_array, AdjMatrix matrix, AdjList list, int timeout) {
+    int size = list.getSize();
+    int first[size];
+    int second[size];
+    initialize_vertex_array(first, size);
+    initialize_vertex_array(second, size);
+    shuffle(first, size);
+    shuffle(second, size);
+    int locations[size];
+    int index;
+    for (index = 0; index < size; index++) {
+        int node = v_array[index];
+        locations[node - 1] = index;
+    }
+    int curr_score = score_ordering(v_array, list);
+    int i, j;
+    int improvement_count = 0;
+    time_t start_time = time(NULL);
+    for (i = 0; i < size; i++) {
+        if (debug && time(NULL) - start_time > timeout) {
+            printf("Swap all pairs timing out after %d seconds\n", timeout);
+            break;
+        }
+        for (j = 0; j < size; j++) {
+            int node_A = first[i];
+            int node_B = second[j];
+            int index_A = locations[node_A - 1];
+            int index_B = locations[node_B - 1];
+            v_array[index_A] = node_B;
+            v_array[index_B] = node_A;
+            int test_score = score_ordering(v_array, list);
+            if (test_score > curr_score) {
+                improvement_count++;
+                if (debug && improvement_count > 9) {
+                    printf("Swap all pairs led to improvement x%d\n", improvement_count);
+                    improvement_count = 0;
+                } 
+                curr_score = test_score;
+                locations[node_A - 1] = index_B;
+                locations[node_B - 1] = index_A;
+            }
+            else {
+                v_array[index_A] = node_A;
+                v_array[index_B] = node_B;
+            }
+
+        }
+    }
+    if (debug && improvement_count > 0) {
+        printf("Swap all pairs led to improvement x%d\n", improvement_count);
+        improvement_count = 0;
+    }
+}
+
 
 /*
 Initialize the array to have elements 1...size
@@ -482,12 +549,24 @@ void ensure_correct_format(int *v_array, int size) {
     }
 }
 
+int refresh_score(int *vertex_array, AdjList list, int *curr_score) {
+    int test_score = score_ordering(vertex_array, list);
+    if (test_score < *curr_score) {
+        return 0;
+    }
+    int diff = test_score - *curr_score;
+    *curr_score = test_score;
+    return diff;
+}
+
 /*
 This is the public method to call for this file. This method will run all of the
 algorithms I have written, one at a time, to iteratively improve upon a solution.
 It will return the final result of running all of the algorithms in a C++ vector.
 */
 std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
+
+    time_t start_time = time(NULL);
 
     int vertex_count = matrix.getSize();
 
@@ -498,34 +577,37 @@ std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
     initialize_node_degrees(node_degrees, matrix);
 
     int initial_score = score_ordering(vertex_array, list);
-    if (debug) printf("Initial, with score %d: ", initial_score);
-    if (debug) print_array(vertex_array, matrix.getSize());
+    int curr_score = initial_score;
+    printf("\nStarting solver_josh\n");
+    printf("Naive score: %d\n", curr_score);
 
-    if (debug) printf("------ Sorting by degree ------\n");
     alg_order_by_degree(vertex_array, node_degrees, matrix, list);
-    if (debug) printf("------ Swapping ------\n");
+    printf("Degree sort: +%d\n", refresh_score(vertex_array, list, &curr_score));
     alg_swap(vertex_array, matrix, list);
-    if (debug) printf("------ Brute Force on Subgroups ------\n");
+    printf("Log swap 1: +%d\n", refresh_score(vertex_array, list, &curr_score));
+    alg_swap_all_pairs(vertex_array, matrix, list, 25);
+    printf("Swap all pairs 1: +%d\n", refresh_score(vertex_array, list, &curr_score));
     alg_brute_force_on_subgroups(vertex_array, matrix, list, 5, 20);
-    if (debug) printf("------ Swapping ------\n");
+    printf("Brute force on subgroups: +%d\n", refresh_score(vertex_array, list, &curr_score));
+    alg_shuffle(vertex_array, matrix, list, 100000, 5);
+    printf("Random shuffling: +%d\n", refresh_score(vertex_array, list, &curr_score));
+    alg_greedy(vertex_array, matrix, list, 15);
+    printf("Greedy: +%d\n", refresh_score(vertex_array, list, &curr_score));
     alg_swap(vertex_array, matrix, list);
-    if (debug) printf("------ Shuffling ------\n");
-    alg_shuffle(vertex_array, matrix, list, 100000, 20);
-    if (debug) printf("------ Swapping ------\n");
-    alg_swap(vertex_array, matrix, list);
-    if (debug) printf("------ Greedy ------\n");
-    alg_greedy(vertex_array, matrix, list, 20);
-    if (debug) printf("------ Swapping ------\n");
-    alg_swap(vertex_array, matrix, list);
+    printf("Log swap 2: +%d\n", refresh_score(vertex_array, list, &curr_score));
+    alg_swap_all_pairs(vertex_array, matrix, list, 20);
+    printf("Swap all pairs 2: +%d\n", refresh_score(vertex_array, list, &curr_score));
 
     ensure_correct_format(vertex_array, vertex_count);
 
     int final_score = score_ordering(vertex_array, list);
-    if (debug) printf("Final, with score %d: ", final_score);
-    if (debug) print_array(vertex_array, matrix.getSize());
+    printf("Final score %d: ", final_score);
 
     int score_diff = final_score - initial_score;
-    if (debug) printf("Improved by %d points, which is %d%%\n", score_diff, 100*score_diff/initial_score);
+    float percentGain = ((float)final_score - (float)initial_score)/(float)initial_score*(float)100;
+    printf("Improved by %d points, which is %f%%\n", score_diff, percentGain);
+    int elapsed_time = time(NULL) - start_time;
+    printf("solver_josh took %d minute(s) %d second(s)\n", elapsed_time/60, elapsed_time%60);
     std::vector<int> v(vertex_array, vertex_array + vertex_count);
     return v;
 }
