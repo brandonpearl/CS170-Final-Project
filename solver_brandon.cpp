@@ -32,7 +32,7 @@ class IMC {
 public:
 	IMC(int player, int value) {p = player; v = value;}
 	int p;
-	int v;
+	float v;
 };
 
 void swap(vector<int> rankStart, AdjList adj, int swapAttempts) {
@@ -159,12 +159,10 @@ vector<int> bruteForce(vector<int> avoid, AdjList list) {
 	int bestScore = numeric_limits<int>::min();
 	for (int i=1; i<=list.getSize(); i++) {
 		if (find(avoid, i)) {
-			//cout << "good" << endl;
 			continue;
 		}
 		vector<int> start (avoid);
 		start.push_back(i);
-		//cout << start.size() << endl;
 		result = bruteForce(start, list);
 		int testScore = scoreSolution(result, list);
 		if (testScore > bestScore) {
@@ -184,7 +182,7 @@ vector<int> greedyInMinusOut(AdjMatrix matrix) {
 	sort.reserve(matrix.getSize());
 	set<int> empty;
 	for (int i=0; i<matrix.getSize(); i++) {
-		sort.push_back(IMC(i+1, matrix.countIn(i, empty) - matrix.countOut(i, empty)));
+		sort.push_back(IMC(i+1, (float)matrix.countIn(i, empty) - (float)matrix.countOut(i, empty)));
 	}
 	sort = mergeSort(sort, 0, sort.size()-1);
 	vector<int> returnVector;
@@ -234,6 +232,32 @@ vector<int> topologicalSort(AdjMatrix matrix) {
 	} else {
 		return L;
 	}
+}
+
+vector<int> matrixAdjacency(AdjMatrix matrix, AdjList list) {
+	vector<AdjMatrix> matrices;
+	matrices.reserve(matrix.getSize());
+	matrices.push_back(matrix);
+	for (int i=1; i<matrix.getSize(); i++) {
+		matrices.push_back(matrices.back().multiplyMatrix(matrix));
+	} 
+	vector<IMC> scores;
+	scores.reserve(matrix.getSize());
+	for (int i=0; i<matrix.getSize(); i++) {
+		float score = 0;
+		for (int j=0; i<matrix.getSize(); j++) {
+			score = score - (float)(1.0/(float)j)*(float)(matrices[j].rowSum(i));
+		}
+		scores.push_back(IMC(i+1, score));
+	}
+	vector<IMC> result = mergeSort(scores, 0, scores.size()-1);
+	vector<int> returnVector;
+	returnVector.reserve(result.size());
+	for (int i=0; i<result.size(); i++) {
+		returnVector.push_back(result[i].p);
+	}
+	return returnVector;
+
 }
 
 vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
