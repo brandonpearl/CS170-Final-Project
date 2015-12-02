@@ -2,52 +2,88 @@
 #include <vector>
 #include <limits.h>
 
-#include "matt/processInput.h"
-#include "solutionScore.cpp"
+// #include "matt/processInput.h"
+// #include "solutionScore.cpp"
 #include "solver_josh.cpp"
 #include "solver_matt.cpp"
 // #include "solver_brandon.cpp"
 
 using namespace std;
 
+
+vector<int> run_algs(char *filename) {
+  AdjMatrix objectMatrix (filename);
+  AdjList objectList (filename);
+  int maxScore = INT_MIN;
+  //All ranks stored here
+  vector<vector<int> > ranks;
+
+  //All other rankings will be added accordingly
+  ranks.push_back(solve_instance_josh(objectMatrix, objectList));
+  ranks.push_back(solve_instance_matt(objectMatrix, objectList));
+  //ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
+
+
+  int score;
+  vector<int> best;
+  for (vector<int> rank : ranks){
+    score = scoreSolution(rank, objectList);
+    if (score > maxScore) {
+      best = rank;
+      maxScore = score;
+    }
+  }
+  cout<<"Optimal rank for given instance: "<< endl;
+
+  //Can figure how to best output rank once we are done adding algos.
+  cout<<"[";
+  for (int i: best)
+    cout<< i<<", ";
+  cout << "]" << endl;
+
+  return best;
+}
+
+
 int main(int argc, char *argv[]){
-  //For now, will have to get called for each instance.
 
-      // if (argc != 2) {
-      //     cout<<"Need to supply instance filename"<<endl;
-      //     exit(1);
-      // }
+  if (argc == 2) {
+    run_algs(argv[1]);
+    return 0;
+  }
+  if (argc != 3) {
+    printf("Supply start file number, and end file number\n");
+  }
 
+  int start_file_no = atoi(argv[1]);
+  int end_file_no = atoi(argv[2]);
 
-      AdjMatrix objectMatrix (argv[1]);
-      AdjList objectList (argv[1]);
-      int maxScore = INT_MIN;
-      //All ranks stored here
-      vector<vector<int> > ranks;
+  if (end_file_no < start_file_no) {
+    printf("End must be larger than start\n");
+    exit(1);
+  }
 
-      //All other rankings will be added accordingly
-      ranks.push_back(solve_instance_josh(objectMatrix, objectList));
-      ranks.push_back(solve_instance_matt(objectMatrix, objectList));
-      //ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
+  char output_file[1024];
+  snprintf(output_file, sizeof(output_file), "%d_to_%d.out", start_file_no, end_file_no);
+  FILE *f = fopen(output_file, "w");
+  if (f == NULL) {
+      printf("Error: results file creation error\n");
+      exit(1);
+  }
 
+  printf("Running on files %d.in to %d.in\n", start_file_no, end_file_no);
 
-      int score;
-      vector<int> best;
-      for (vector<int> rank : ranks){
-        score = scoreSolution(rank, objectList);
-        if (score > maxScore) {
-          best = rank;
-          maxScore = score;
-        }
-      }
-      cout<<"Optimal rank for given instance: "<< endl;
+  int i;
+  for (i = start_file_no; i <= end_file_no; i++) {
+    char file_name[1024];
+    snprintf(file_name, sizeof(file_name), "%d.in", i);
+    printf("Running on %s\n", file_name);
+    vector<int> sol = run_algs(file_name);
+    for (vector<int>::iterator j=sol.begin(); j!=sol.end(); ++j) {
+      fprintf(f, "%d ", *j);
+    }
+    fprintf(f, "\n");
+  }
 
-      //Can figure how to best output rank once we are done adding algos.
-      cout<<"[";
-      for (int i: best)
-        cout<< i<<", ";
-      cout << "]" << endl;
-
-      return 0;
 
 }
