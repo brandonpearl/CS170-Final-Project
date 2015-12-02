@@ -1,6 +1,8 @@
 *.exe
 *.obj
 
+.DS_Store
+
 // Compiled files
 instance_generator
 solver_josh
