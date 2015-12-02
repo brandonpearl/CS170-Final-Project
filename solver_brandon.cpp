@@ -19,7 +19,7 @@
 #include "matt/processinput.h"
 #endif
 #include <time.h>
-
+#include <math.h>
 using namespace std;
 
 int swapAttempts = 10000;
@@ -234,7 +234,16 @@ vector<int> topologicalSort(AdjMatrix matrix) {
 	}
 }
 
-vector<int> matrixAdjacency(AdjMatrix matrix, AdjList list) {
+float powBrandon(float base, int power) {
+	if (base == 0) {
+		return 0.0;
+	} else {
+		return pow(base, (float)power);
+	}
+}
+
+vector<int> matrixAdjacency(AdjMatrix matrix, int power) {
+	assert(power == 1 || power == -1);
 	vector<AdjMatrix> matrices;
 	matrices.reserve(matrix.getSize());
 	matrices.push_back(matrix);
@@ -245,8 +254,8 @@ vector<int> matrixAdjacency(AdjMatrix matrix, AdjList list) {
 	scores.reserve(matrix.getSize());
 	for (int i=0; i<matrix.getSize(); i++) {
 		float score = 0;
-		for (int j=0; i<matrix.getSize(); j++) {
-			score = score - (float)(1.0/(float)j)*(float)(matrices[j].rowSum(i));
+		for (int j=0; j<matrices.size(); j++) {
+			score = score - powBrandon(j, power)*(float)(matrices[j].rowSum(i));
 		}
 		scores.push_back(IMC(i+1, score));
 	}
@@ -262,7 +271,9 @@ vector<int> matrixAdjacency(AdjMatrix matrix, AdjList list) {
 
 vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 	vector<int> best;
-	//return bruteForce(best, list);
+	if (matrix.getSize() <= 9) {
+		return bruteForce(best, list);
+	}
 	vector<int> random = makeRandomOrder(matrix.getSize());
 	int currentScore = scoreSolution(random, list);
 	float percentChange = numeric_limits<float>::max();
@@ -283,16 +294,22 @@ vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 	vector<int> topological = topologicalSort(matrix);
 	cout << "Beginning Greedy Approximation" << endl;
 	vector<int> greedy = greedyInMinusOut(matrix);
+	cout << "Beginning Adjacency Approximation" << endl;
+	vector<int> adjacency1 = matrixAdjacency(matrix, 1);
+	vector<int> adjacency2 = matrixAdjacency(matrix, -1);
 	if (topological.size() != 0) {
 		return topological;
 	}
 	vector<vector<int> > solutionCandidates;
 	solutionCandidates.push_back(random);
 	solutionCandidates.push_back(greedy);
+	solutionCandidates.push_back(adjacency1);
+	solutionCandidates.push_back(adjacency2);
 	int bestScore = numeric_limits<int>::min();
 	vector<int> bestSolution;
 	for (int i=0; i<solutionCandidates.size(); i++) {
 		int testScore = scoreSolution(solutionCandidates[i], list);
+		cout << "Comparing Score of: " << testScore << " to current max of: " << bestScore << endl;
 		if (testScore > bestScore) {
 			bestScore = testScore;
 			bestSolution = solutionCandidates[i];
