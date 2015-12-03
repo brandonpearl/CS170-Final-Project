@@ -52,7 +52,7 @@ int scoreSolution(vector<int> rank, AdjList adj) {
 Changed name to test_main so this file can be included in another file that has a
 main function
 */
-int brandon_test_main(int argc, char *argv[]) {
+/*int brandon_test_main(int argc, char *argv[]) {
 	int size;
 	if (argc > 1) {
 		size = atof(argv[1]);
@@ -67,4 +67,4 @@ int brandon_test_main(int argc, char *argv[]) {
 	}
 	cout << scoreSolution(a, lst) << endl;
 	return 0;
-}
+}*/
