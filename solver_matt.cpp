@@ -4,8 +4,11 @@
 #include <chrono>
 #include <list>
 #include <stack>
-#include "matt/processInput.h"
+#ifndef _adj
+#define _adj
+#include "matt/processinput.h"
 #include "solutionScore.h"
+#endif
 // #include "solver_josh.cpp"
 using namespace std;
 

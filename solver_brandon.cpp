@@ -6,7 +6,6 @@
 #endif
 #ifndef _util
 #define _util
-#include "solutionScore.h"
 #include <stdlib.h>
 #include <limits>
 #endif
@@ -17,6 +16,7 @@
 #ifndef _adj
 #define _adj
 #include "matt/processinput.h"
+#include "solutionScore.h"
 #endif
 #include <time.h>
 #include <math.h>
@@ -320,11 +320,11 @@ vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 
 }
 
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
 	AdjMatrix matrix (argv[1]);
     AdjList list (argv[1]);
 
     vector<int> solution = solve_instance_brandon(matrix, list);
     cout << scoreSolution(solution, list);
     return 0;
-}
+}*/

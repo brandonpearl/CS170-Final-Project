@@ -1,7 +1,11 @@
-#include "solutionScore.h"
 #include <vector>
 #include <assert.h>
 #include <limits.h>
+#ifndef _adj
+#define _adj
+#include "matt/processinput.h"
+#include "solutionScore.h"
+#endif
 using namespace std;
 
 #define MIN_VAL(a,b) (((a)<(b))?(a):(b))
