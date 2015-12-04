@@ -1,4 +1,9 @@
+#ifndef _io
+#define _io
 #include <iostream>
+#include <assert.h>
+#include <stdio.h>
+#endif
 #include <fstream>
 #include <set>
 using namespace std;
@@ -21,7 +26,9 @@ class AdjMatrix {
     /*
      * Used in duplicate() method.
      */
-    AdjMatrix() {size=0;}
+    AdjMatrix() {
+        size = 0;
+    }
 
     AdjMatrix(char* filename) {
         // Attempt to open the file
@@ -92,6 +99,32 @@ class AdjMatrix {
      */
     void removeEdge(int i, int j) {
         matrix[i][j] = 0;
+    }
+
+    AdjMatrix multiplyMatrix(AdjMatrix mat) {
+        int** retMatrix = new int*[size];
+        for (int i=0; i<size; i++) {
+            retMatrix[i] = new int[size];
+            for (int j=0; j<size; j++) {
+                int sum = 0;
+                for (int k=0; k<size; k++) {
+                    sum = sum + matrix[i][k]*mat.matrix[j][k];
+                }
+                retMatrix[i][j] = sum;
+            }
+        }
+        AdjMatrix returnValue = AdjMatrix();
+        returnValue.size = size;
+        returnValue.matrix = retMatrix;
+        return returnValue;
+    }
+
+    int rowSum(int i) {
+        int sum = 0;
+        for (int j=0; j<size; j++) {
+            sum = sum + matrix[i][j];
+        }
+        return sum;
     }
 
     int getSize(){

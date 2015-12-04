@@ -1,12 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <limits.h>
-
-// #include "matt/processInput.h"
-// #include "solutionScore.cpp"
+#ifndef _adj
+#define _adj
+#include "matt/processinput.h"
+#include "solutionScore.h"
+#endif
 #include "solver_josh.cpp"
 #include "solver_matt.cpp"
-// #include "solver_brandon.cpp"
+#include "solver_brandon.cpp"
 
 using namespace std;
 
@@ -21,7 +23,7 @@ vector<int> run_algs(char *filename) {
   //All other rankings will be added accordingly
   ranks.push_back(solve_instance_josh(objectMatrix, objectList));
   ranks.push_back(solve_instance_matt(objectMatrix, objectList));
-  // ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
+  ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
 
 
   int score;
@@ -82,7 +84,7 @@ int main(int argc, char *argv[]){
   for (i = start_file_no; i <= end_file_no; i++) {
     char file_name[1024];
     snprintf(file_name, sizeof(file_name), "%d.in", i);
-    printf("Running on %s\n", file_name);
+    printf("\nRunning on %s\n", file_name);
     vector<int> sol = run_algs(file_name);
     for (vector<int>::iterator j=sol.begin(); j!=sol.end(); ++j) {
       fprintf(f, "%d ", *j);
