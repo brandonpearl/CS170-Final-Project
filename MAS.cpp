@@ -50,7 +50,7 @@ vector<int> run_algs(char *filename) {
 Can either do
   ./MAS filename.in to run on one file
   OR
-  ./MAS X Y to run from X.in to Y.in and generate an output file
+  ./MAS X Y to run from instances/X.in to instances/Y.in and generate an output file
 */
 int main(int argc, char *argv[]){
 
@@ -83,11 +83,15 @@ int main(int argc, char *argv[]){
   int i;
   for (i = start_file_no; i <= end_file_no; i++) {
     char file_name[1024];
+<<<<<<< HEAD
     int err = snprintf(file_name, sizeof(file_name), "instances/%d.in", i);
     if (err < 0) {
         printf("\nError: Filename %s not found\n", file_name);
         return -1;
     }
+=======
+    snprintf(file_name, sizeof(file_name), "instances/%d.in", i);
+>>>>>>> 82075b1b962d349a389f5a846d71b0081760a260
     printf("\nRunning on %s\n", file_name);
     vector<int> sol = run_algs(file_name);
     for (vector<int>::iterator j=sol.begin(); j!=sol.end(); ++j) {
