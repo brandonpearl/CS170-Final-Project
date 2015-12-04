@@ -25,7 +25,6 @@ vector<int> run_algs(char *filename) {
   ranks.push_back(solve_instance_matt(objectMatrix, objectList));
   //ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
 
-
   int score;
   vector<int> best;
   for (vector<int> rank : ranks){

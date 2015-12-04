@@ -118,7 +118,7 @@ void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
         }
         if (indexToAdd == -1) {
             printf("no index to add\n");
-            inp = copy;
+            copyIntArray (inp, copy, size);
             return;
         }
         inp[r] = indexToAdd;
@@ -163,7 +163,7 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
         }
         if (indexToAdd == -1) {
             printf("no index to add\n");
-            inp = copy;
+            copyIntArray (inp, copy, size);
             return;
         }
         inp[r] = indexToAdd;

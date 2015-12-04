@@ -34,7 +34,7 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 	}
 	for (int i=0; fullSolution && i<size; i++) {
         if (!hasSeen[i]) {
-            printf("%d",i);
+            printf("%d\n",i);
         }
 		assert(hasSeen[i]);
 	}
