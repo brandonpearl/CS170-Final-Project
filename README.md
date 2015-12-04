@@ -1,6 +1,16 @@
 # CS170-Final-Project
 Max acyclic subgraph.
 
+
+Instructions for MAS:
+
+You can do ./MAS filename.in to run on one file in the same directory as MAS.CPP
+
+OR
+
+You can do ./MAS X Y to run on instances X.in to Y.in *** in the instances/ directory ***
+
+
 Instructions for Instance Generator:
 
     Build the executable by typing 'make'
