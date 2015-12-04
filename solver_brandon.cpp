@@ -328,7 +328,7 @@ vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 
 }
 
-int main(int argc, char *argv[]) {
+int brandon_main(int argc, char *argv[]) {
 	AdjMatrix matrix (argv[1]);
     AdjList list (argv[1]);
 
