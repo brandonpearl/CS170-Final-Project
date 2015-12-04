@@ -14,13 +14,12 @@
 #endif
 using namespace std;
 inline int min(int a, int b) {if (a>b) {return b;} else {return a;}}
-inline int max(int a, int b) {if (a>b) {return a;} else {return b;}}
 
 int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolution) {
 	if (fullSolution) {
 		assert(size == adj.getSize());
 	}
-	vector<bool> hasSeen (size, false);
+	vector<bool> hasSeen (adj.getSize(), false);
 	int score = 0;
 
 	for (int i=0; i<size; i++) {
