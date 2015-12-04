@@ -23,7 +23,7 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 	int score = 0;
 
 	for (int i=0; i<size; i++) {
-		int node = min(rank[i] - 1, size-1);
+		int node = rank[i] - 1;
 		hasSeen[node] = true;
 		set<int> adjacent = adj.allEdges(node);
 		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
