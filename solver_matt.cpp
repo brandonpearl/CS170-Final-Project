@@ -93,7 +93,7 @@ void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
 
     for (int r=0; r<size; r++) { // makes sure we repeat
         min = 1000;
-        indexToAdd = 0;
+        indexToAdd = -1;
         for (int i=0; i<size; i++) {
             if (ignore.find(i) == ignore.end()) { // if not on our ignore list
                 if (matrix.countIn(i, ignore) < min) {
@@ -107,6 +107,9 @@ void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
                     }
                 }
             }
+        }
+        if (indexToAdd == -1) {
+            return;
         }
         inp[r] = indexToAdd;
         ignore.insert(indexToAdd-1);
@@ -129,7 +132,7 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
 
     for (int r=0; r<size; r++) { // makes sure we repeat
         max = -1;
-        indexToAdd = 0;
+        indexToAdd = -1;
         for (int i=0; i<size; i++) {
             if (ignore.find(i) == ignore.end()) { // if not on our ignore list
                 if (matrix.countOut(i, ignore) > max) {
@@ -143,6 +146,9 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
                     }
                 }
             }
+        }
+        if (indexToAdd == -1) {
+            return;
         }
         inp[r] = indexToAdd;
         ignore.insert(indexToAdd-1);

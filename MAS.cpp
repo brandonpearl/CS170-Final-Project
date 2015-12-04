@@ -21,9 +21,9 @@ vector<int> run_algs(char *filename) {
   vector<vector<int> > ranks;
 
   //All other rankings will be added accordingly
-  ranks.push_back(solve_instance_josh(objectMatrix, objectList));
+  //ranks.push_back(solve_instance_josh(objectMatrix, objectList));
   ranks.push_back(solve_instance_matt(objectMatrix, objectList));
-  ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
+  //ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
 
 
   int score;
@@ -83,7 +83,11 @@ int main(int argc, char *argv[]){
   int i;
   for (i = start_file_no; i <= end_file_no; i++) {
     char file_name[1024];
-    snprintf(file_name, sizeof(file_name), "%d.in", i);
+    int err = snprintf(file_name, sizeof(file_name), "instances/%d.in", i);
+    if (err < 0) {
+        printf("\nError: Filename %s not found\n", file_name);
+        return -1;
+    }
     printf("\nRunning on %s\n", file_name);
     vector<int> sol = run_algs(file_name);
     for (vector<int>::iterator j=sol.begin(); j!=sol.end(); ++j) {
