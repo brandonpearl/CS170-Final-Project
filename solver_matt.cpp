@@ -289,6 +289,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     copyIntArray(best_array, vertex_array, size);
 
     cout << endl << "Starting solver_matt" << endl;
+    time_t start = time(0);
 
     score = matt_score_ordering(vertex_array, list);
     naiveScore = score;
@@ -368,6 +369,10 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     cout << " points, which is "<<percentGain <<" percent\n";
 
     vector<int> best (vertex_array, vertex_array + size);
+
+    int elapsed_time = time(NULL) - start;
+    printf("solver_matt took %d minute(s) %d second(s)\n", elapsed_time/60, elapsed_time%60);
+
     return best;
 }
 
