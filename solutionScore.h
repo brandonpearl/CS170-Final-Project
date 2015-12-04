@@ -14,17 +14,16 @@
 #endif
 using namespace std;
 inline int min(int a, int b) {if (a>b) {return b;} else {return a;}}
-inline int max(int a, int b) {if (a>b) {return a;} else {return b;}}
 
 int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolution) {
 	if (fullSolution) {
 		assert(size == adj.getSize());
 	}
-	vector<bool> hasSeen (size, false);
+	vector<bool> hasSeen (adj.getSize(), false);
 	int score = 0;
 
 	for (int i=0; i<size; i++) {
-		int node = min(rank[i] - 1, size-1);
+		int node = rank[i] - 1;
 		hasSeen[node] = true;
 		set<int> adjacent = adj.allEdges(node);
 		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
@@ -34,6 +33,9 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 		}
 	}
 	for (int i=0; fullSolution && i<size; i++) {
+        if (!hasSeen[i]) {
+            printf("%d\n",i);
+        }
 		assert(hasSeen[i]);
 	}
 	return score;

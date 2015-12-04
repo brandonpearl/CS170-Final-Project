@@ -83,6 +83,9 @@ void copyIntArray (int* to, int* from, int size) {
 //  - If tied, max incoming from nodes already visited
 // Returns an int* with this ordering
 void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
+    int copy[size];
+    copyIntArray (copy, inp, size);
+
     int min;
     int indexToAdd;
     set<int> ignore;
@@ -101,7 +104,12 @@ void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
                     indexToAdd = i+1;
                 } else if (matrix.countIn(i, ignore) == min) {
                     int newI = matrix.countOut(i, notIgnore);
-                    int oldI = matrix.countOut(indexToAdd, notIgnore);
+                    int oldI;
+                    if (indexToAdd != -1) {
+                        oldI = matrix.countOut(indexToAdd, notIgnore);
+                    } else {
+                        oldI = -1;
+                    }
                     if (newI > oldI) {
                         indexToAdd = i+1;
                     }
@@ -109,6 +117,8 @@ void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
             }
         }
         if (indexToAdd == -1) {
+            printf("no index to add\n");
+            copyIntArray (inp, copy, size);
             return;
         }
         inp[r] = indexToAdd;
@@ -122,6 +132,9 @@ void greedyIncoming(AdjMatrix matrix, int* inp, int size) {
 //  - If tied, max incoming from nodes already visited
 // Returns an int* with this ordering
 void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
+    int copy[size];
+    copyIntArray (copy, inp, size);
+
     int max;
     int indexToAdd;
     set<int> ignore;
@@ -146,8 +159,11 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
                     }
                 }
             }
+        
         }
         if (indexToAdd == -1) {
+            printf("no index to add\n");
+            copyIntArray (inp, copy, size);
             return;
         }
         inp[r] = indexToAdd;
@@ -158,6 +174,7 @@ void greedyOutgoing(AdjMatrix matrix, int* inp, int size) {
 
 // generates 1,000 random orders and returns the max scoring one
 void randomSolver (int* inp, int size, AdjList list) {
+
     std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
