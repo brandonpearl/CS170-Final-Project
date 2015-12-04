@@ -176,8 +176,8 @@ void pairSwapForward (AdjList list, int* inp, int size) {
     std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
-    for (int i=0; i<100; i++) {
-        for (int j=i+1; j<100; j++) {
+    for (int i=0; i<size; i++) {
+        for (int j=i+1; j<size; j++) {
             std::vector<int> copy(v);
             int temp = copy[j];
             copy[j] = copy[i];
@@ -201,7 +201,7 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
     std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
-    for (int i=99; i>=0; i--) {
+    for (int i=size-1; i>=0; i--) {
         for (int j=i-1; j>=0; j--) {
             std::vector<int> copy(v);
             int temp = copy[j];
@@ -293,6 +293,7 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     copyIntArray(best_array, vertex_array, size);
 
     cout << endl << "Starting solver_matt" << endl;
+    time_t start = time(0);
 
     score = matt_score_ordering(vertex_array, list);
     naiveScore = score;
@@ -372,6 +373,10 @@ std::vector<int> solve_instance_matt(AdjMatrix matrix, AdjList list) {
     cout << " points, which is "<<percentGain <<" percent\n";
 
     vector<int> best (vertex_array, vertex_array + size);
+
+    int elapsed_time = time(NULL) - start;
+    printf("solver_matt took %d minute(s) %d second(s)\n", elapsed_time/60, elapsed_time%60);
+
     return best;
 }
 
