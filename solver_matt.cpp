@@ -176,8 +176,8 @@ void pairSwapForward (AdjList list, int* inp, int size) {
     std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
-    for (int i=0; i<100; i++) {
-        for (int j=i+1; j<100; j++) {
+    for (int i=0; i<size; i++) {
+        for (int j=i+1; j<size; j++) {
             std::vector<int> copy(v);
             int temp = copy[j];
             copy[j] = copy[i];
@@ -201,7 +201,7 @@ void pairSwapBackward (AdjList list, int* inp, int size) {
     std::vector<int> v(inp, inp + size);
     int score = scoreSolution(v, list);
     int newScore;
-    for (int i=99; i>=0; i--) {
+    for (int i=size-1; i>=0; i--) {
         for (int j=i-1; j>=0; j--) {
             std::vector<int> copy(v);
             int temp = copy[j];
