@@ -41,25 +41,29 @@ class AdjMatrix {
         // Start parsing the file, assuming its properly formatted
         // We begin by getting the number of nodes (between 0 and 100)
         char line[4];
-        inFile.getline(line, 4);
+        inFile.getline(line, 100);
     
         size = atoi(line);
         matrix = new int*[size];
     
         // We then construct our adjacency matrix
         char ch;
-        for (int i=0; i<size; i++) {
+
+        char inst_line[300];
+
+        for (int i = 0; i < size; i++) {
+            inFile.getline(inst_line, 300);
             matrix[i] = new int[size];
-            for (int j=0; j<size; j++) {
-                inFile.get(ch);
-    
-                // Insert into adjacency matrix
-                int e = ch - '0';
-                matrix[i][j] = e;
-    
-                inFile.get(ch);
+            for (int j = 0; j < size; j++) {
+                char edge = inst_line[2*j];
+                if (j > 0) {
+                    assert (inst_line[2*j - 1] == ' ');
+                }
+                assert(edge == '0' || edge == '1');
+                matrix[i][j] = edge - '0';
             }
         }
+
         inFile.close();
     }   
 
@@ -194,23 +198,27 @@ class AdjList {
         // Start parsing the file, assuming its properly formatted
         // We begin by getting the number of nodes (between 0 and 100)
         char line[4];
-        inFile.getline(line, 100);
+        inFile.getline(line, 100, '\n');
     
         size = atoi(line);
         list = new set<int>[size];
     
         // We then construct our adjacency list
         char ch;
-        for (int i=0; i<size; i++) {
-            for (int j=0; j<size; j++) {
-                inFile.get(ch);
-    
-                int e = ch - '0';
-                if (e == 1) {
+
+        char inst_line[300];
+
+        for (int i = 0; i < size; i++) {
+            inFile.getline(inst_line, 300, '\n');
+            for (int j = 0; j < size; j++) {
+                char edge = inst_line[2*j];
+                if (j > 0) {
+                    assert (inst_line[2*j - 1] == ' ');
+                }
+                assert(edge == '0' || edge == '1');
+                if (edge - '0' == 1) {
                     list[i].insert(j);
                 }
-                
-                inFile.get(ch);
             }
         }
         inFile.close();
