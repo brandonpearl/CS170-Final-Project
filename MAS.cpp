@@ -21,9 +21,9 @@ vector<int> run_algs(char *filename) {
   vector<vector<int> > ranks;
 
   //All other rankings will be added accordingly
-  //ranks.push_back(solve_instance_josh(objectMatrix, objectList));
+  ranks.push_back(solve_instance_josh(objectMatrix, objectList));
   ranks.push_back(solve_instance_matt(objectMatrix, objectList));
-  //ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
+  ranks.push_back(solve_instance_brandon(objectMatrix, objectList));
 
   int score;
   vector<int> best;
@@ -45,7 +45,7 @@ vector<int> run_algs(char *filename) {
   return best;
 }
 
-/* 
+/*
 Can either do
   ./MAS filename.in to run on one file
   OR
