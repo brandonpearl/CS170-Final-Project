@@ -45,7 +45,7 @@ vector<int> run_algs(char *filename) {
 }
 
 
-/* 
+/*
 Can either do
   ./MAS filename.in to run on one file
   OR

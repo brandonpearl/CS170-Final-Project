@@ -36,7 +36,7 @@ vector<int> combo(vector<int> left, vector<int> right){
 
 void brute_force_permute_ibra(int *inpt, int size, AdjList list, vector<vector<int> > &results) {
         vector<int> vect(inpt, inpt + size);
-        if (size == 0) results.push_back(vect);
+        if (size == 0) return;
         else {
           for (int i = size - 1; i >= 0; i--){
             swap_vertices(i, size - 1, vect);
