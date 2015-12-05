@@ -591,11 +591,11 @@ std::vector<int> solve_instance_josh(AdjMatrix matrix, AdjList list) {
     printf("Log swap 1: +%d\n", refresh_score(vertex_array, list, &curr_score));
     alg_swap_all_pairs(vertex_array, matrix, list, 25);
     printf("Swap all pairs 1: +%d\n", refresh_score(vertex_array, list, &curr_score));
-    alg_brute_force_on_subgroups(vertex_array, matrix, list, 5, 11);
+    alg_brute_force_on_subgroups(vertex_array, matrix, list, 5, 6);
     printf("Brute force on subgroups: +%d\n", refresh_score(vertex_array, list, &curr_score));
-    alg_shuffle(vertex_array, matrix, list, 100000, 5);
-    printf("Random shuffling: +%d\n", refresh_score(vertex_array, list, &curr_score));
-    alg_greedy(vertex_array, matrix, list, 7);
+    // alg_shuffle(vertex_array, matrix, list, 100000, 5);
+    // printf("Random shuffling: +%d\n", refresh_score(vertex_array, list, &curr_score));
+    alg_greedy(vertex_array, matrix, list, 5);
     printf("Greedy: +%d\n", refresh_score(vertex_array, list, &curr_score));
     alg_swap(vertex_array, matrix, list);
     printf("Log swap 2: +%d\n", refresh_score(vertex_array, list, &curr_score));
