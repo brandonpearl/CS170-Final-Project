@@ -24,6 +24,8 @@ using namespace std;
 
 int swapAttempts = 10000;
 float pointless = 1e-7;
+float E = 2.71828182845;
+float PI = 3.14159265358;
 
 class IMC {
 	/*
@@ -82,16 +84,6 @@ vector<int> makeRandomOrder(int elements) {
 	}
 	return returnVector;
 }
-
-/*vector<int> frugalRoutine() {
-
-}*/
-
-/*vector<int> frugalDynamic(AdjMatrix matrix, AdjList list, int subSize) {
-
-
-	
-}*/
 
 vector<IMC> mergeSort(vector<IMC> list, int first, int last) {
 	/*
@@ -234,16 +226,30 @@ vector<int> topologicalSort(AdjMatrix matrix) {
 	}
 }
 
-float powBrandon(float base, int power) {
+float standardDev(int size) {
+	float average = (float)(1 + size)/2.0;
+	average = average / (float)size;
+	float variance = 0;
+	for (int i=1; i<=size; i++) {
+		variance = variance + pow((float)i-average, 2);
+	}
+	return pow(variance, 0.5);
+}
+
+float func(float base, int function, int size) {
 	if (base == 0) {
 		return 0.0;
+	} else if (function == 0) {
+		float average = (float)(1 + size)/2.0;
+		float standard = standardDev(size);
+		return (1.0/(standard*pow(2.0*PI,0.5)))*pow(E, -pow(base-average, 2)/(2*pow(standard, 2)));
 	} else {
-		return pow(base, (float)power);
+		return pow(base, (float)function);
 	}
 }
 
-vector<int> matrixAdjacency(AdjMatrix matrix, int power) {
-	assert(power == 1 || power == -1);
+vector<int> matrixAdjacency(AdjMatrix matrix, int function) {
+	assert(function == 1 || function == 0 || function == -1);
 	vector<AdjMatrix> matrices;
 	matrices.reserve(matrix.getSize());
 	matrices.push_back(matrix);
@@ -255,7 +261,7 @@ vector<int> matrixAdjacency(AdjMatrix matrix, int power) {
 	for (int i=0; i<matrix.getSize(); i++) {
 		float score = 0;
 		for (int j=0; j<matrices.size(); j++) {
-			score = score - powBrandon(j, power)*(float)(matrices[j].rowSum(i));
+			score = score - func(j, function, matrix.getSize())*(float)(matrices[j].rowSum(i));
 		}
 		scores.push_back(IMC(i+1, score));
 	}
@@ -297,6 +303,7 @@ vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 	cout << "Beginning Adjacency Approximation" << endl;
 	vector<int> adjacency1 = matrixAdjacency(matrix, 1);
 	vector<int> adjacency2 = matrixAdjacency(matrix, -1);
+	vector<int> adjacency3 = matrixAdjacency(matrix, 0);
 	if (topological.size() != 0) {
 		return topological;
 	}
@@ -305,6 +312,7 @@ vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 	solutionCandidates.push_back(greedy);
 	solutionCandidates.push_back(adjacency1);
 	solutionCandidates.push_back(adjacency2);
+	solutionCandidates.push_back(adjacency3);
 	int bestScore = numeric_limits<int>::min();
 	vector<int> bestSolution;
 	for (int i=0; i<solutionCandidates.size(); i++) {
@@ -320,11 +328,11 @@ vector<int> solve_instance_brandon(AdjMatrix matrix, AdjList list) {
 
 }
 
-/*int main(int argc, char *argv[]) {
+int brandon_main(int argc, char *argv[]) {
 	AdjMatrix matrix (argv[1]);
     AdjList list (argv[1]);
 
     vector<int> solution = solve_instance_brandon(matrix, list);
     cout << scoreSolution(solution, list);
     return 0;
-}*/
+}

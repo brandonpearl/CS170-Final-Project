@@ -6,7 +6,7 @@ all:
 	g++ MAS.cpp -o MAS
 clean:
 	rm instance_generator
-	rm solver_josh
-	rm solver_matt
-	rm solver_brandon
+	# rm solver_josh
+	# rm solver_matt
+	# rm solver_brandon
 	rm MAS

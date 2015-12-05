@@ -24,6 +24,7 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 
 	for (int i=0; i<size; i++) {
 		int node = rank[i] - 1;
+		assert(node < adj.getSize());
 		hasSeen[node] = true;
 		set<int> adjacent = adj.allEdges(node);
 		for (set<int>::iterator j=adjacent.begin(); j!=adjacent.end(); ++j) {
@@ -33,9 +34,6 @@ int scoreSolutionGeneral(vector<int> rank, AdjList adj, int size, bool fullSolut
 		}
 	}
 	for (int i=0; fullSolution && i<size; i++) {
-        if (!hasSeen[i]) {
-            printf("%d\n",i);
-        }
 		assert(hasSeen[i]);
 	}
 	return score;
