@@ -132,7 +132,7 @@ vector<int> solve_instance_ibra(AdjMatrix matrix, AdjList list){
 }
 
 //testing
-int main (int argc, char *argv[]) {
+int ibra_main (int argc, char *argv[]) {
     if (argc != 2) {
         printf("Need to supply instance filename\n");
         exit(1);
